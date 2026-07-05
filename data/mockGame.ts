@@ -1,88 +1,71 @@
-import { Game, AchievementTag } from '../types/schema';
+// data/mockGame.ts
+import { Game } from '../types/schema';
 
-// Helper Database of Achievement Tags to keep your code clean and dry
-export const MASTER_TAGS: Record<string, AchievementTag> = {
-  storyRelated: {
-    id: 'story-related',
-    name: 'Story Related',
-    description: 'Unlocks automatically via main campaign progression. Cannot be missed.',
-    themeType: 'benefit',
-    tailwindClasses: 'bg-emerald-950/50 text-emerald-400 border-emerald-800/60'
-  },
-  stackable: {
-    id: 'stackable',
-    name: 'Stackable',
-    description: 'Beating the game on higher difficulties or strict settings will trigger lower difficulty trophies simultaneously.',
-    themeType: 'benefit',
-    tailwindClasses: 'bg-teal-950/50 text-teal-400 border-teal-800/60'
-  },
-  easterEgg: {
-    id: 'easter-egg',
-    name: 'Easter Egg',
-    description: 'Unlocked by performing hidden, unusual, or joke actions.',
-    themeType: 'slight-benefit',
-    tailwindClasses: 'bg-cyan-950/50 text-cyan-400 border-cyan-800/60'
-  },
-  collectible: {
-    id: 'collectible',
-    name: 'Collectible',
-    description: 'Requires tracking down hidden files, lore logs, chests, or environmental landmarks.',
-    themeType: 'slight-struggle',
-    tailwindClasses: 'bg-amber-950/50 text-amber-400 border-amber-800/60'
-  },
-  missable: {
-    id: 'missable',
-    name: 'Missable',
-    description: 'Can be permanently locked out in a single playthrough due to specific timeline choices or failures.',
-    themeType: 'struggle',
-    tailwindClasses: 'bg-red-950/50 text-red-400 border-red-900/60'
-  },
-  heavyGrind: {
-    id: 'heavy-grind',
-    name: 'Heavy Grind',
-    description: 'Requires extensive, repetitive task farming or resource dumpings.',
-    themeType: 'struggle',
-    tailwindClasses: 'bg-rose-950/50 text-rose-400 border-rose-900/60'
-  }
-};
-
-// The Master Mock Games Database Matrix
 export const mockGames: Game[] = [
   {
     id: 'persona-5-royal',
     title: 'Persona 5 Royal',
     genres: ['JRPG', 'Turn-Based', 'Social Sim'],
-    imageUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=60', // Placeholder layout image
+    
+    // UPDATED: Using the verified 3-asset setup
+    assets: {
+      thumbnailUrl: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600',
+      cleanWallpaperUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920',
+      transparentLogoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png'
+    },
+    
     isNewRelease: false,
-    weeklyViews: 12450,
+    weeklyViews: 1250,
     totalAchievements: 53,
     blindPlaythroughHours: 100,
     minimumPlaythroughs: 1,
     timeTo100PercentBase: 120,
-    timeTo100PercentPerfect: 70, // Optimized walkthrough speed
+    timeTo100PercentPerfect: 70,
+    
+    // UPDATED: Standardized to your exact MainCategoryLabel options
     mainCompletionCategory: {
       label: 'Knowledge & Strategy Heavy',
-      emoji: '🧠',
-      hoverDescription: 'Difficulty 5/10. Combat is completely manageable, but achieving 100% requires strict optimized daily schedule management and social stat planning.',
-      numericDifficultyCode: 5
+      numericDifficultyCode: 5,
+      description: 'Difficulty 5/10. Combat is completely manageable, but achieving 100% requires strict optimized daily schedule management and social stat planning.'
     },
-    experienceTags: ['low-error-margin', 'true-ending-content', 'satisfying-progression'],
+    
+    // UPDATED: Clean lookup IDs instead of copy-pasted text strings
+    experienceTags: [
+      'low-error-margin',
+      'true-ending-content',
+      'satisfying-progression'
+    ],
+    
     achievementsAreHomogeneous: false,
+    
     achievements: [
       {
-        id: 'p5r-true-phantom',
+        id: 'p5r-true-ending',
         title: 'The Phenomenal Phantom Thief',
         description: 'Obtained all trophies.',
-        tags: [MASTER_TAGS.storyRelated],
-        isSecret: false
+        isSecret: false,
+        tags: [
+          { 
+            id: 'story-related', 
+            name: 'Story Related', 
+            description: 'Unlocked naturally through primary campaign tracking.', 
+            tailwindClasses: 'bg-emerald-950/40 text-emerald-400 border-emerald-900/50' 
+          }
+        ]
       },
       {
-        id: 'p5r-max-coop',
+        id: 'p5r-max-confidants',
         title: 'Pure Perfection',
         description: 'Maxed out all Confidants.',
-        tags: [MASTER_TAGS.missable],
-        isSecret: true,
-        notes: 'Highly vulnerable to time-management mistakes. Missing the November deadline completely ruins the playthrough.'
+        isSecret: false,
+        tags: [
+          { 
+            id: 'missable', 
+            name: 'Missable', 
+            description: 'Permanent point-of-no-return risk present.', 
+            tailwindClasses: 'bg-rose-950/40 text-rose-400 border-rose-900/50' 
+          }
+        ]
       }
     ],
     guides: [],
@@ -92,9 +75,13 @@ export const mockGames: Game[] = [
     id: 'stardew-valley',
     title: 'Stardew Valley',
     genres: ['Farming Sim', 'RPG', 'Cozy'],
-    imageUrl: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500&auto=format&fit=crop&q=60',
+    assets: {
+      thumbnailUrl: 'https://images.unsplash.com/photo-1551103782-8ab07afd45c1?q=80&w=600',
+      cleanWallpaperUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?q=80&w=1920',
+      transparentLogoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png'
+    },
     isNewRelease: false,
-    weeklyViews: 9800,
+    weeklyViews: 980,
     totalAchievements: 40,
     blindPlaythroughHours: 50,
     minimumPlaythroughs: 1,
@@ -102,20 +89,25 @@ export const mockGames: Game[] = [
     timeTo100PercentPerfect: 90,
     mainCompletionCategory: {
       label: 'Farming & Progression Focused',
-      emoji: '🧑‍🌾',
-      hoverDescription: 'Difficulty 5/10. A therapeutic but massive systemic journey. Zero mechanical reflection tests, but demands total mastery over seasonal cycles and processing lines.',
-      numericDifficultyCode: 5
+      numericDifficultyCode: 6,
+      description: 'Difficulty 6/10. Requires profound layout dedication, massive crop rotation automation metrics, and luck-heavy arcade challenge completions.'
     },
-    experienceTags: ['endgame-heavy', 'heavy-rng-drops', 'external-wiki-required'],
+    experienceTags: [
+      'heavy-rng-drops',
+      'map-sweeper',
+      'satisfying-progression'
+    ],
     achievementsAreHomogeneous: false,
     achievements: [
       {
-        id: 'sdv-master-craft',
+        id: 'sv-craft-master',
         title: 'Craft Master',
         description: 'Craft every item.',
-        tags: [MASTER_TAGS.collectible, MASTER_TAGS.heavyGrind],
         isSecret: false,
-        notes: 'Requires specific recipe items exclusively bought from rotating seasonal merchant inventories.'
+        tags: [
+          { id: 'collectible', name: 'Collectible', description: 'Requires hunting down every single item variant.', tailwindClasses: 'bg-amber-950/40 text-amber-400 border-amber-900/50' },
+          { id: 'heavy-grind', name: 'Heavy Grind', description: 'Requires intensive loop repetition.', tailwindClasses: 'bg-rose-950/40 text-rose-400 border-rose-900/50' }
+        ]
       }
     ],
     guides: [],
@@ -124,30 +116,39 @@ export const mockGames: Game[] = [
   {
     id: 'a-little-to-the-left',
     title: 'A Little to the Left',
-    genres: ['Puzzle', 'Cozy', 'Casual'],
-    imageUrl: 'https://images.unsplash.com/photo-1541689221361-ad95007aa51c?w=500&auto=format&fit=crop&q=60',
-    isNewRelease: false,
-    weeklyViews: 5400,
-    totalAchievements: 61, // Includes full DLC stacks
+    genres: ['Puzzle', 'Casual', 'Cozy'],
+    assets: {
+      thumbnailUrl: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=600',
+      cleanWallpaperUrl: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1920',
+      transparentLogoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png'
+    },
+    isNewRelease: true,
+    weeklyViews: 2100,
+    totalAchievements: 61,
     blindPlaythroughHours: 4,
     minimumPlaythroughs: 1,
     timeTo100PercentBase: 12,
     timeTo100PercentPerfect: 8,
     mainCompletionCategory: {
       label: 'Cozy & Casual Friendly',
-      emoji: '☕',
-      hoverDescription: 'Difficulty 2/10. Delightful organization and sorting puzzles. No penalty timers, failure screens, or mechanical walls. Pure peaceful scrubbing.',
-      numericDifficultyCode: 2
+      numericDifficultyCode: 2,
+      description: 'Difficulty 2/10. Relaxing, straightforward puzzle logic. A guide can be easily used to clear alternative solutions without timing penalties.'
     },
-    experienceTags: ['victory-run', 'assist-mode-tweakable', 'creative-playstyle'],
-    achievementsAreHomogeneous: false,
+    experienceTags: [
+      'creative-playstyle',
+      'satisfying-progression'
+    ],
+    achievementsAreHomogeneous: true,
+    homogeneousLabel: 'All Puzzles Equal Weight',
     achievements: [
       {
-        id: 'altl-tidy',
+        id: 'altl-base',
         title: 'As Clean As A Whistle',
         description: 'Complete all base puzzles.',
-        tags: [MASTER_TAGS.storyRelated],
-        isSecret: false
+        isSecret: false,
+        tags: [
+          { id: 'story-related', name: 'Story Related', description: 'Unlocked naturally through primary campaign tracking.', tailwindClasses: 'bg-emerald-950/40 text-emerald-400 border-emerald-900/50' }
+        ]
       }
     ],
     guides: [],
