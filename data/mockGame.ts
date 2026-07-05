@@ -77,9 +77,9 @@ export const mockGames: Game[] = [
     title: 'Stardew Valley',
     genres: ['Farming Sim', 'RPG', 'Cozy'],
     assets: {
-      thumbnailUrl: 'https://images.unsplash.com/photo-1551103782-8ab07afd45c1?q=80&w=600',
-      cleanWallpaperUrl: 'https://images.unsplash.com/photo-1500627869374-13cd993b1115?q=80&w=1920',
-      transparentLogoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png'
+      thumbnailUrl: 'https://images4.alphacoders.com/782/782781.png',
+      cleanWallpaperUrl: 'https://image.api.playstation.com/cdn/UP2456/CUSA06840_00/FREE_CONTENTibBzhaWYsWyQGvkzHDol/PREVIEW_SCREENSHOT2_130501.jpg',
+      transparentLogoUrl: 'https://cdn10.idcgames.com/storage/image/1149/stardew-valley-logo/default.png'
     },
     isNewRelease: false,
     weeklyViews: 980,
@@ -120,9 +120,9 @@ export const mockGames: Game[] = [
     title: 'A Little to the Left',
     genres: ['Puzzle', 'Casual', 'Cozy'],
     assets: {
-      thumbnailUrl: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=600',
-      cleanWallpaperUrl: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1920',
-      transparentLogoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/512px-React-icon.svg.png'
+      thumbnailUrl: 'https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000051361/256bd3ebd32d472158a53f95206f55f566f1253dc472f3dc3967be31214816d8',
+      cleanWallpaperUrl: 'https://image.api.playstation.com/vulcan/ap/rnd/202405/0110/69804e105b9b215b250311f46dbe78ea726a68f6a80c6a25.jpg',
+      transparentLogoUrl: 'https://cdn.xsolla.net/image-proxy/rs:fit:3840:0/f:webp/storage/merchant-bucket-prod/files/uploaded/sitebuilder/264059/ad8e9ea92d6b1d3b351d7f6f8c422f0d.png'
     },
     isNewRelease: true,
     weeklyViews: 2100,

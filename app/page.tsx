@@ -1,14 +1,41 @@
 "use client";
 
 import React from 'react';
+
 // Exact data structures and configuration paths from your workspace
 import { mockGames } from '../data/mockGame';
 import { mockHallOfFame } from '../data/mockFame';
 import { MAIN_CATEGORY_REGISTRY, EXPERIENCE_TAG_REGISTRY } from '../types/schema';
 
 export default function HomePage() {
+
   const trendingGames = [...mockGames].sort((a, b) => b.weeklyViews - a.weeklyViews);
   const recentlyAdded = [...mockGames];
+
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const [triggerReset, setTriggerReset] = React.useState(0); // Tracks manual button interactions
+
+  // Auto-advance loop with an expanded 9-second window
+  React.useEffect(() => {
+    if (isPaused || trendingGames.length === 0) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % trendingGames.length);
+    }, 9000); // 9 seconds window as requested
+
+    return () => clearInterval(timer);
+  }, [isPaused, trendingGames.length, triggerReset]); // Listens to triggerReset to restart the timer instantly
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % trendingGames.length);
+    setTriggerReset((prev) => prev + 1); // Wipes out active interval and restarts clock
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + trendingGames.length) % trendingGames.length);
+    setTriggerReset((prev) => prev + 1); // Wipes out active interval and restarts clock
+  };
 
   const hallOfFameCards = mockHallOfFame.map(entry => {
     const gameDetails = mockGames.find(game => game.id === entry.gameId);
@@ -41,7 +68,7 @@ export default function HomePage() {
             <span className="absolute left-3 top-2.5 text-slate-500 text-xs group-focus-within:text-rose-500 transition-colors">🔍</span>
             <input
               type="text"
-              placeholder="Search target registries (e.g., Persona)..."
+              placeholder="Search games (e.g. Dark Souls)..."
               className="w-full bg-slate-900/60 border border-slate-800 rounded-lg pl-8 pr-4 py-2 text-xs font-medium text-slate-200 placeholder-slate-500 outline-none focus:border-rose-500/50 focus:bg-slate-900 transition-all shadow-inner"
             />
           </div>
@@ -82,85 +109,113 @@ export default function HomePage() {
             <h2 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
               <span className="text-rose-500">🔥</span> Featured
             </h2>
+
+            {/* Manual Slide Controls */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handlePrev}
+                className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition-colors"
+                aria-label="Previous Featured Game"
+              >
+                ‹
+              </button>
+              <button
+                onClick={handleNext}
+                className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition-colors"
+                aria-label="Next Featured Game"
+              >
+                ›
+              </button>
+            </div>
           </div>
 
-          <div className="flex w-full overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory gap-0">
-            {trendingGames.map((game) => {
-              const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory.label];
 
-              return (
-                <div key={game.id} className="w-full shrink-0 px-1 snap-center">
-                  <a
-                    href={`/games/${game.id}`}
-                    className="block w-full bg-gradient-to-br from-slate-900 to-slate-950/40 rounded-2xl border border-slate-900 hover:border-slate-800/80 transition-all duration-300 overflow-visible flex flex-col md:flex-row group relative shadow-2xl cursor-pointer text-left"
-                  >
+          <div
+            className="w-full overflow-hidden relative"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div
+              className="flex w-full transition-transform duration-500 ease-out gap-0"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {trendingGames.map((game) => {
+                const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory.label];
 
-                    <div className="w-full md:w-[40%] h-48 md:h-64 relative shrink-0 bg-slate-950 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={game.assets.thumbnailUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 opacity-60" />
-                      <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-transparent via-slate-950/20 to-slate-950" />
-                    </div>
+                return (
+                  <div key={game.id} className="w-full shrink-0 px-1 snap-center">
+                    <a
+                      href={`/games/${game.id}`}
+                      className="block w-full bg-gradient-to-br from-slate-900 to-slate-950/40 rounded-2xl border border-slate-900 hover:border-slate-800/80 transition-all duration-300 overflow-visible flex flex-col md:flex-row group relative shadow-2xl cursor-pointer text-left"
+                    >
 
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-4 overflow-visible relative">
-                      <div className="space-y-1">
-                        <h3 className="text-xl font-black text-white group-hover:text-rose-400 transition-colors">{game.title}</h3>
-                        <p className="text-xs text-slate-400 font-semibold">{game.genres.join(' • ')}</p>
+                      <div className="w-full md:w-[40%] h-48 md:h-64 relative shrink-0 bg-slate-950 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={game.assets.thumbnailUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-transparent via-slate-950/20 to-slate-950" />
                       </div>
 
-                      {/* FIXED VIBRANT GRADIENT BORDER & BACKGLOW BADGE */}
-                      {/* FEATURED: Refined dictionary-driven gradient badge structure */}
-                      {categoryConfig && (
-                        <div
-                          className="relative group/tooltip inline-block self-start overflow-visible z-30"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {/* Clean border layer reading directly from our style variables */}
-                          <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-lg shadow-black/40 cursor-help transition-all duration-300 hover:scale-[1.01]`}>
-                            {/* Setting the resting opacity layer to bg-slate-950/75 allows the gradient to shimmer behind it.
+                      <div className="p-6 flex-1 flex flex-col justify-between space-y-4 overflow-visible relative">
+                        <div className="space-y-1">
+                          <h3 className="text-xl font-black text-white group-hover:text-rose-400 transition-colors">{game.title}</h3>
+                          <p className="text-xs text-slate-400 font-semibold">{game.genres.join(' • ')}</p>
+                        </div>
+
+                        {/* FIXED VIBRANT GRADIENT BORDER & BACKGLOW BADGE */}
+                        {/* FEATURED: Refined dictionary-driven gradient badge structure */}
+                        {categoryConfig && (
+                          <div
+                            className="relative group/tooltip inline-block self-start overflow-visible z-30"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {/* Clean border layer reading directly from our style variables */}
+                            <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-lg shadow-black/40 cursor-help transition-all duration-300 hover:scale-[1.01]`}>
+                              {/* Setting the resting opacity layer to bg-slate-950/75 allows the gradient to shimmer behind it.
                                 On hover, it smoothly transitions to a slightly clearer bg-slate-950/40 for a beautiful, controlled glow.
                               */}
-                            <div className="bg-slate-950/75 group-hover/tooltip:bg-slate-950/40 transition-colors duration-300 rounded-[7px] px-3 py-1.5 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
-                              <span className="text-sm drop-shadow">{categoryConfig.emoji}</span>
-                              <span className="drop-shadow-md">{game.mainCompletionCategory.label}</span>
-                            </div>
-                          </div>
-
-                          <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 p-4 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-200 text-xs z-50 leading-relaxed">
-                            {game.mainCompletionCategory.description}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-900/80 text-center md:text-left">
-                        <div className="border-r border-slate-900/40"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Achievements</span><span className="text-xs font-black text-slate-200">{game.totalAchievements} Total</span></div>
-                        <div className="sm:border-r border-slate-900/40 pl-2 sm:pl-0"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Blind Play</span><span className="text-xs font-black text-slate-200">{game.blindPlaythroughHours}h</span></div>
-                        <div className="border-r border-slate-900/40 pl-0 sm:pl-2"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Min Runs</span><span className="text-xs font-black text-slate-200">{game.minimumPlaythroughs}x</span></div>
-                        <div className="pl-2"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">100% Route</span><span className="text-xs font-black text-rose-400">{game.timeTo100PercentPerfect}h <span className="text-[10px] font-normal text-slate-500">/ {game.timeTo100PercentBase}h</span></span></div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-1.5">
-                        {game.experienceTags.map((tagId) => {
-                          const tagConfig = EXPERIENCE_TAG_REGISTRY[tagId];
-                          return tagConfig ? (
-                            <div key={tagId} className="relative group/tag inline-block">
-                              <span className="inline-block px-2.5 py-0.5 text-[10px] font-extrabold rounded bg-slate-950 text-slate-400 border border-slate-900 tracking-wide capitalize cursor-help transition-colors group-hover/tag:text-slate-200 group-hover/tag:border-slate-700">
-                                {tagConfig.name}
-                              </span>
-                              <div className="absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 scale-95 opacity-0 pointer-events-none transition-all duration-150 ease-out origin-bottom group-hover/tag:scale-100 group-hover/tag:opacity-100">
-                                <div className="px-2.5 py-2 text-[11px] font-medium text-slate-300 bg-slate-900 border border-slate-800 rounded shadow-2xl text-center leading-normal">
-                                  {tagConfig.description}
-                                </div>
+                              <div className="bg-slate-950/75 group-hover/tooltip:bg-slate-950/40 transition-colors duration-300 rounded-[7px] px-3 py-1.5 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
+                                <span className="text-sm drop-shadow">{categoryConfig.emoji}</span>
+                                <span className="drop-shadow-md">{game.mainCompletionCategory.label}</span>
                               </div>
                             </div>
-                          ) : null;
-                        })}
-                      </div>
-                    </div>
 
-                  </a>
-                </div>
-              );
-            })}
+                            <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 p-4 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-200 text-xs z-50 leading-relaxed">
+                              {game.mainCompletionCategory.description}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-900/80 text-center md:text-left">
+                          <div className="border-r border-slate-900/40"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Achievements</span><span className="text-xs font-black text-slate-200">{game.totalAchievements} Total</span></div>
+                          <div className="sm:border-r border-slate-900/40 pl-2 sm:pl-0"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Blind Play</span><span className="text-xs font-black text-slate-200">{game.blindPlaythroughHours}h</span></div>
+                          <div className="border-r border-slate-900/40 pl-0 sm:pl-2"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Min Runs</span><span className="text-xs font-black text-slate-200">{game.minimumPlaythroughs}x</span></div>
+                          <div className="pl-2"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">100% Route</span><span className="text-xs font-black text-rose-400">{game.timeTo100PercentPerfect}h <span className="text-[10px] font-normal text-slate-500">/ {game.timeTo100PercentBase}h</span></span></div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-1.5">
+                          {game.experienceTags.map((tagId) => {
+                            const tagConfig = EXPERIENCE_TAG_REGISTRY[tagId];
+                            return tagConfig ? (
+                              <div key={tagId} className="relative group/tag inline-block">
+                                <span className="inline-block px-2.5 py-0.5 text-[10px] font-extrabold rounded bg-slate-950 text-slate-400 border border-slate-900 tracking-wide capitalize cursor-help transition-colors group-hover/tag:text-slate-200 group-hover/tag:border-slate-700">
+                                  {tagConfig.name}
+                                </span>
+                                <div className="absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 scale-95 opacity-0 pointer-events-none transition-all duration-150 ease-out origin-bottom group-hover/tag:scale-100 group-hover/tag:opacity-100">
+                                  <div className="px-2.5 py-2 text-[11px] font-medium text-slate-300 bg-slate-900 border border-slate-800 rounded shadow-2xl text-center leading-normal">
+                                    {tagConfig.description}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -260,7 +315,7 @@ export default function HomePage() {
 
                   <div className="h-24 relative bg-slate-950 overflow-visible shrink-0 rounded-t-xl">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={game.assets.thumbnailUrl} alt={game.title} className="w-full h-full object-cover opacity-40 blur-[1px]" />
+                    <img src={game.assets.thumbnailUrl} alt={game.title} className="w-full h-full object-cover block align-middle opacity-60" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-950/40 to-transparent" />
 
                     <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between z-20">

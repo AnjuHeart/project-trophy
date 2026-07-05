@@ -110,7 +110,7 @@ export default function GameDetailPage() {
                             {/* Mini Main Category pill - Fixed resting states & hover upgrade */}
                             {categoryConfig && (
                                 <div className="relative group/miniCategory self-start cursor-help">
-                                    <div className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-gradient-to-br ${categoryConfig.bgGradient} text-white/90 shadow-sm flex items-center gap-1.5 opacity-60 brightness-[0.75] group-hover/miniCategory:opacity-100 group-hover/miniCategory:brightness-110 group-hover/miniCategory:shadow-[0_0_12px_rgba(244,63,94,0.15)] transition-all duration-200`}>
+                                    <div className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} text-white shadow-sm flex items-center gap-1.5 transition-all duration-300 group-hover/miniCategory:scale-[1.03]`}>
                                         <span>{categoryConfig.emoji}</span>
                                         <span>{game.mainCompletionCategory.label}</span>
                                     </div>
@@ -180,7 +180,7 @@ export default function GameDetailPage() {
                 <img
                     src={game.assets.cleanWallpaperUrl}
                     alt=""
-                    className="w-full h-full object-cover opacity-60 blur-none scale-102 select-none pointer-events-none" />
+                    className="w-full h-full object-cover opacity-80 blur-none scale-102 select-none pointer-events-none" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/80" />
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-transparent to-slate-950" />
 
@@ -210,7 +210,7 @@ export default function GameDetailPage() {
                             <span className="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
                             <input
                                 type="text"
-                                placeholder="Search games, trophies, guides..."
+                                placeholder="Search games (e.g. Dark Souls)..."
                                 className="w-full bg-slate-900/60 border border-slate-800/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-slate-700/80 transition-all font-medium"
                             />
                         </div>
