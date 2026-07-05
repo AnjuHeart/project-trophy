@@ -123,6 +123,8 @@ export interface Game {
     achievements: Achievement[];
     guides: CommunityGuide[];
     comments: UserComment[];
+
+    completionOverview: string;
 }
 
 // ==========================================
