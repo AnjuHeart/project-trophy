@@ -119,30 +119,8 @@ function GamesDirectoryContent() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-rose-500/30">
       
-      {/* SYSTEM NAVBAR */}
-      <header className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-30">
-        <div className="w-full flex items-center justify-between border-b border-slate-900/40 pb-4">
-          <div className="flex items-center gap-4">
-            <a href="/" className="flex items-center gap-2 group">
-              <div className="w-5 h-5 rounded bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-[10px] border border-slate-800 group-hover:border-rose-500/50 transition-colors">
-                🏆
-              </div>
-              <span className="text-sm font-black tracking-tight text-slate-300 uppercase">
-                Trophy<span className="text-rose-500">DB</span>
-              </span>
-            </a>
-            <span className="text-slate-700 font-bold text-xs">/</span>
-            <nav className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <a href="/games" className="hover:text-rose-400 transition-colors">Games</a>
-              <span>/</span>
-              <span className="text-slate-300">Library</span>
-            </nav>
-          </div>
-        </div>
-      </header>
-
       {/* MAIN CONTAINER */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto pt-22 px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
         
         {/* STATS RIBBON */}
         <div className="space-y-4">

@@ -70,7 +70,8 @@ export const mockGames: Game[] = [
     ],
     guides: [],
     comments: [],
-    completionOverview: 'A massive, narrative-driven mountain that demands absolute time optimization. While the Royal edition is significantly more forgiving than the vanilla base game—allowing a single-playthrough Platinum if you rigorously manage your daily time-slots with a strict calendar schedule—hitting true 100% database completion requires entering New Game Plus. Maximizing all phantom thief attributes, maxing out every social confidant link, tracking down missable calendar-locked requests, and defeating exclusive hidden endgame superbosses means setting aside a massive 120 to 140+ hour commitment.'
+    completionOverview: 'A massive, narrative-driven mountain that demands absolute time optimization. While the Royal edition is significantly more forgiving than the vanilla base game—allowing a single-playthrough Platinum if you rigorously manage your daily time-slots with a strict calendar schedule—hitting true 100% database completion requires entering New Game Plus. Maximizing all phantom thief attributes, maxing out every social confidant link, tracking down missable calendar-locked requests, and defeating exclusive hidden endgame superbosses means setting aside a massive 120 to 140+ hour commitment.',
+    isHallOfFame: true
   },
   {
     id: 'stardew-valley',
@@ -113,7 +114,8 @@ export const mockGames: Game[] = [
     ],
     guides: [],
     comments: [],
-    completionOverview: 'The ultimate test of structural micro-management and thorough planning. Reaching 100% "True Perfection" transforms a laid-back farming simulator into a rigid, spreadsheets-required operation. You must ship every crop, catch all legendary seasonal weather-locked fish, master every cooking/crafting recipe, and grind out a massive 13 million gold to buy endgame structures like the Golden Clock. One single missed crop or missing birthday gift can set your progression timeline back by an entire in-game calendar year, making a checklist mandatory.'
+    completionOverview: 'The ultimate test of structural micro-management and thorough planning. Reaching 100% "True Perfection" transforms a laid-back farming simulator into a rigid, spreadsheets-required operation. You must ship every crop, catch all legendary seasonal weather-locked fish, master every cooking/crafting recipe, and grind out a massive 13 million gold to buy endgame structures like the Golden Clock. One single missed crop or missing birthday gift can set your progression timeline back by an entire in-game calendar year, making a checklist mandatory.',
+    isHallOfFame: false
   },
   {
     id: 'a-little-to-the-left',
@@ -155,6 +157,7 @@ export const mockGames: Game[] = [
     ],
     guides: [],
     comments: [],
-    completionOverview: "Don't let the cozy aesthetic fool you; achieving 100% completion is an absolute chore. While the base puzzles are relaxing, the platinum track requires you to complete 100 separate, unique 'Daily Tidy' challenges. Because these are real-time, calendar-locked events, you are forced to either load up the game every single day for over three months straight or tedious clock-cheat your system settings back and forth. Combined with clearing every single alternative solution across all DLC packages, a brief casual puzzle title turns into a rigid, repetitive daily obligation."
+    completionOverview: "Don't let the cozy aesthetic fool you; achieving 100% completion is an absolute chore. While the base puzzles are relaxing, the platinum track requires you to complete 100 separate, unique 'Daily Tidy' challenges. Because these are real-time, calendar-locked events, you are forced to either load up the game every single day for over three months straight or tedious clock-cheat your system settings back and forth. Combined with clearing every single alternative solution across all DLC packages, a brief casual puzzle title turns into a rigid, repetitive daily obligation.",
+    isHallOfFame: true
   }
 ];

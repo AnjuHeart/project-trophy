@@ -97,6 +97,7 @@ export interface Game {
     // Homepage Metrics & Sorting Locks
     isNewRelease: boolean;
     weeklyViews: number;      // Higher numbers float games to the popular carousel
+    isHallOfFame: boolean;    // If true, the game is featured in the Hall of Fame section
 
     // Raw Completion Variables
     totalAchievements: number;

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 // 1. ADDED: imported useRouter to handle redirection
-import { useParams, useRouter } from 'next/navigation'; 
+import { useParams, useRouter } from 'next/navigation';
 import { mockGames } from '../../../data/mockGame';
 import { MAIN_CATEGORY_REGISTRY } from '../../../types/schema';
 
@@ -28,7 +28,7 @@ const EXPERIENCE_TAG_DETAILS: Record<string, { name: string; description: string
 export default function GameDetailPage() {
     const params = useParams();
     // 2. ADDED: Initialize Next.js router instance
-    const router = useRouter(); 
+    const router = useRouter();
     const gameId = params.id as string;
     const game = mockGames.find((g) => g.id === gameId);
 
@@ -113,11 +113,22 @@ export default function GameDetailPage() {
 
                     {/* Left Block: Game identity details */}
                     <div className="flex items-center gap-4 min-w-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src={game.assets.transparentLogoUrl}
-                            alt=""
-                            className="h-12 w-auto object-contain select-none pointer-events-none" />
+
+                        {/* Wrapped image in a click box, added pointer cursor, and hover scaling */}
+                        <div
+                            onClick={scrollToTop}
+                            className="cursor-pointer hover:scale-[1.03] active:scale-95 transition-transform duration-200"
+                            title="Scroll to top"
+                        >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={game.assets.transparentLogoUrl}
+                                alt={`${game.title} logo`}
+                                /* REMOVED pointer-events-none so it registers human click interaction */
+                                className="h-12 w-auto object-contain select-none"
+                            />
+                        </div>
+
                         <div className="flex flex-col min-w-0 space-y-0.5">
                             <h4 className="text-sm font-black text-white uppercase truncate tracking-tight">
                                 {game.title}
@@ -200,38 +211,6 @@ export default function GameDetailPage() {
 
                 {/* HERO CONTAINER */}
                 <div className="absolute inset-0 max-w-7xl mx-auto px-6 pt-6 pb-10 flex flex-col justify-between z-20">
-
-                    {/* NAV BAR */}
-                    <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900/40 pb-4">
-                        <div className="flex items-center gap-4">
-                            <a href="/" className="flex items-center gap-2 group">
-                                <div className="w-5 h-5 rounded bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-[10px] border border-slate-800 group-hover:border-rose-500/50 transition-colors">
-                                    🏆
-                                </div>
-                                <span className="text-sm font-black tracking-tight text-slate-300 uppercase">
-                                    Trophy<span className="text-rose-500">DB</span>
-                                </span>
-                            </a>
-                            <span className="text-slate-700 font-bold text-xs">/</span>
-                            <nav className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                <a href="/games" className="hover:text-rose-400 transition-colors">Games</a>
-                                <span>/</span>
-                                <span className="text-slate-300 truncate max-w-[140px]">{game.title}</span>
-                            </nav>
-                        </div>
-
-                        {/* 5. MODIFIED: Swapped out the old div layout wrapper for a working <form> structure */}
-                        <form onSubmit={handleNavSearchSubmit} className="w-full sm:w-64 relative">
-                            <span className="absolute left-3 top-2.5 text-slate-500 text-xs pointer-events-none">🔍</span>
-                            <input
-                                type="text"
-                                value={navSearch}
-                                onChange={(e) => setNavSearch(e.target.value)}
-                                placeholder="Search games (e.g. Dark Souls)..."
-                                className="w-full bg-slate-900/60 border border-slate-800/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-slate-700/80 transition-all font-medium"
-                            />
-                        </form>
-                    </div>
 
                     {/* LOWER HEADER HERO BLOCK */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 items-end gap-10 w-full mt-auto">
@@ -515,7 +494,7 @@ export default function GameDetailPage() {
 
                 </div>
             </main>
-            
+
         </div>
     );
 }

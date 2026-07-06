@@ -63,52 +63,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-rose-500/30 selection:text-rose-200 flex flex-col">
 
-      {/* GLOBAL APPLICATION HEADER & SEARCH NAVIGATION */}
-      <nav className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-b-slate-900 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-
-          <a href="/" className="flex items-center gap-2.5 group cursor-pointer select-none">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center font-black text-white text-sm shadow-lg shadow-rose-500/20 group-hover:scale-105 transition-transform">
-              🏆
-            </div>
-            <span className="text-md font-black tracking-tight text-white uppercase">
-              Trophy<span className="text-rose-500 group-hover:text-rose-400 transition-colors">DB</span>
-            </span>
-          </a>
-
-          <div className="w-full sm:w-80 relative group">
-            <span className="absolute left-3 top-2.5 text-slate-500 text-xs group-focus-within:text-rose-500 transition-colors">🔍</span>
-            <input
-              type="text"
-              placeholder="Search games (e.g. Dark Souls)..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentIndex(0);
-              }}
-              /* ADD THIS BLOCK BELOW */
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && searchQuery.trim() !== '') {
-                  window.location.href = `/games?search=${encodeURIComponent(searchQuery.trim())}`;
-                }
-              }}
-              className="w-full bg-slate-900/60 border border-slate-800 rounded-lg pl-8 pr-4 py-2 text-xs font-medium text-slate-200 placeholder-slate-500 outline-none focus:border-rose-500/50 focus:bg-slate-900 transition-all shadow-inner"
-            />
-          </div>
-
-          <div className="flex items-center gap-6 text-xs font-bold text-slate-400">
-            <a href="/" className="hover:text-rose-400 transition-colors">Home</a>
-            <a href="/hall-of-fame" className="hover:text-amber-400 transition-colors flex items-center gap-1">
-              <span>🎖️</span> Hall of Fame
-            </a>
-            <a href="/games" className="hover:text-rose-400 transition-colors">Games</a>
-          </div>
-
-        </div>
-      </nav>
-
       {/* HERO DESCRIPTIVE EXPLANATION BANNER */}
-      <header className="relative max-w-7xl mx-auto px-6 pt-12 pb-6 w-full">
+      <header className="relative max-w-7xl mx-auto px-6 pt-22 pb-6 w-full">
         <div className="max-w-3xl space-y-3">
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
             TrophyDB: <span className="text-rose-400">An Achievement Database for Hunters</span>
