@@ -8,33 +8,45 @@ import { mockHallOfFame } from '../data/mockFame';
 import { MAIN_CATEGORY_REGISTRY, EXPERIENCE_TAG_REGISTRY } from '../types/schema';
 
 export default function HomePage() {
+  const [searchQuery, setSearchQuery] = React.useState('');
 
-  const trendingGames = [...mockGames].sort((a, b) => b.weeklyViews - a.weeklyViews);
-  const recentlyAdded = [...mockGames];
+  // 1. Live filtered list for regular sections
+  const filteredGames = mockGames.filter(game =>
+    game.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // 2. FIXED: Isolate Carousel pool to the base data so it doesn't break/shrink on search input
+  const trendingGames = React.useMemo(() => {
+    return [...mockGames].sort((a, b) => b.weeklyViews - a.weeklyViews);
+  }, []);
+
+  const recentlyAdded = filteredGames; // Stays reactive to search input
 
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isPaused, setIsPaused] = React.useState(false);
-  const [triggerReset, setTriggerReset] = React.useState(0); // Tracks manual button interactions
+  const [triggerReset, setTriggerReset] = React.useState(0);
 
-  // Auto-advance loop with an expanded 9-second window
+  // Auto-advance loop
   React.useEffect(() => {
     if (isPaused || trendingGames.length === 0) return;
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % trendingGames.length);
-    }, 9000); // 9 seconds window as requested
+    }, 9000);
 
     return () => clearInterval(timer);
-  }, [isPaused, trendingGames.length, triggerReset]); // Listens to triggerReset to restart the timer instantly
+  }, [isPaused, trendingGames.length, triggerReset]);
 
   const handleNext = () => {
+    if (trendingGames.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % trendingGames.length);
-    setTriggerReset((prev) => prev + 1); // Wipes out active interval and restarts clock
+    setTriggerReset((prev) => prev + 1);
   };
 
   const handlePrev = () => {
+    if (trendingGames.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + trendingGames.length) % trendingGames.length);
-    setTriggerReset((prev) => prev + 1); // Wipes out active interval and restarts clock
+    setTriggerReset((prev) => prev + 1);
   };
 
   const hallOfFameCards = mockHallOfFame.map(entry => {
@@ -69,6 +81,17 @@ export default function HomePage() {
             <input
               type="text"
               placeholder="Search games (e.g. Dark Souls)..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentIndex(0);
+              }}
+              /* ADD THIS BLOCK BELOW */
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && searchQuery.trim() !== '') {
+                  window.location.href = `/games?search=${encodeURIComponent(searchQuery.trim())}`;
+                }
+              }}
               className="w-full bg-slate-900/60 border border-slate-800 rounded-lg pl-8 pr-4 py-2 text-xs font-medium text-slate-200 placeholder-slate-500 outline-none focus:border-rose-500/50 focus:bg-slate-900 transition-all shadow-inner"
             />
           </div>
@@ -101,16 +124,13 @@ export default function HomePage() {
       {/* MAIN CONTENT CANVAS AREA */}
       <main className="max-w-7xl mx-auto px-6 py-4 space-y-16 flex-1 w-full">
 
-        {/* ========================================================= */}
-        {/* MODULE 1: FEATURED CAROUSEL ZONE                           */}
-        {/* ========================================================= */}
+        {/* MODULE 1: FEATURED CAROUSEL ZONE */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
               <span className="text-rose-500">🔥</span> Featured
             </h2>
 
-            {/* Manual Slide Controls */}
             <div className="flex items-center gap-2">
               <button
                 onClick={handlePrev}
@@ -129,26 +149,30 @@ export default function HomePage() {
             </div>
           </div>
 
-
           <div
-            className="w-full overflow-hidden relative"
+            className="w-full overflow-hidden relative rounded-2xl"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
+            {/* FIXED: Explicitly forced standard CSS layout layout styling for transitions */}
             <div
-              className="flex w-full transition-transform duration-500 ease-out gap-0"
+              className="flex w-full transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
               {trendingGames.map((game) => {
-                const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory.label];
+                // FIXED: Safety fallback to prevent crashes if a lookup fails
+                const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory?.label] || {
+                  bgGradient: "from-slate-800 to-slate-900",
+                  hoverGradient: "hover:from-slate-700 hover:to-slate-800",
+                  emoji: "🎮"
+                };
 
                 return (
-                  <div key={game.id} className="w-full shrink-0 px-1 snap-center">
+                  <div key={game.id} className="w-full shrink-0 snap-center">
                     <a
                       href={`/games/${game.id}`}
-                      className="block w-full bg-gradient-to-br from-slate-900 to-slate-950/40 rounded-2xl border border-slate-900 hover:border-slate-800/80 transition-all duration-300 overflow-visible flex flex-col md:flex-row group relative shadow-2xl cursor-pointer text-left"
+                      className="block w-full bg-gradient-to-br from-slate-900 to-slate-950/40 rounded-2xl border border-slate-900 hover:border-slate-800/80 transition-all duration-300 flex flex-col md:flex-row group relative shadow-2xl cursor-pointer text-left"
                     >
-
                       <div className="w-full md:w-[40%] h-48 md:h-64 relative shrink-0 bg-slate-950 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={game.assets.thumbnailUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 opacity-60" />
@@ -161,29 +185,23 @@ export default function HomePage() {
                           <p className="text-xs text-slate-400 font-semibold">{game.genres.join(' • ')}</p>
                         </div>
 
-                        {/* FIXED VIBRANT GRADIENT BORDER & BACKGLOW BADGE */}
-                        {/* FEATURED: Refined dictionary-driven gradient badge structure */}
-                        {categoryConfig && (
-                          <div
-                            className="relative group/tooltip inline-block self-start overflow-visible z-30"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {/* Clean border layer reading directly from our style variables */}
-                            <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-lg shadow-black/40 cursor-help transition-all duration-300 hover:scale-[1.01]`}>
-                              {/* Setting the resting opacity layer to bg-slate-950/75 allows the gradient to shimmer behind it.
-                                On hover, it smoothly transitions to a slightly clearer bg-slate-950/40 for a beautiful, controlled glow.
-                              */}
-                              <div className="bg-slate-950/75 group-hover/tooltip:bg-slate-950/40 transition-colors duration-300 rounded-[7px] px-3 py-1.5 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
-                                <span className="text-sm drop-shadow">{categoryConfig.emoji}</span>
-                                <span className="drop-shadow-md">{game.mainCompletionCategory.label}</span>
-                              </div>
+                        <div
+                          className="relative group/tooltip inline-block self-start overflow-visible z-30"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-lg shadow-black/40 cursor-help transition-all duration-300 hover:scale-[1.01]`}>
+                            <div className="bg-slate-950/75 group-hover/tooltip:bg-slate-950/40 transition-colors duration-300 rounded-[7px] px-3 py-1.5 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
+                              <span className="text-sm drop-shadow">{categoryConfig.emoji}</span>
+                              <span className="drop-shadow-md">{game.mainCompletionCategory?.label}</span>
                             </div>
+                          </div>
 
+                          {game.mainCompletionCategory?.description && (
                             <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 p-4 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/tooltip:opacity-100 transition-opacity duration-200 text-xs z-50 leading-relaxed">
                               {game.mainCompletionCategory.description}
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
 
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-900/80 text-center md:text-left">
                           <div className="border-r border-slate-900/40"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Achievements</span><span className="text-xs font-black text-slate-200">{game.totalAchievements} Total</span></div>
@@ -210,7 +228,6 @@ export default function HomePage() {
                           })}
                         </div>
                       </div>
-
                     </a>
                   </div>
                 );
@@ -219,25 +236,24 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ========================================================= */}
-        {/* MODULE 2: HIGHLY ACCLAIMED SECTION                         */}
-        {/* ========================================================= */}
+        {/* MODULE 2: HIGHLY ACCLAIMED SECTION */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
               <span className="text-amber-500">🎖️</span> Highly Acclaimed
             </h2>
-            <a
-              href="/hall-of-fame"
-              className="text-xs text-amber-400 hover:text-amber-300 font-extrabold tracking-wider bg-amber-950/20 px-3 py-1.5 rounded border border-amber-900/40 transition-colors z-20"
-            >
+            <a href="/hall-of-fame" className="text-xs text-amber-400 hover:text-amber-300 font-extrabold tracking-wider bg-amber-950/20 px-3 py-1.5 rounded border border-amber-900/40 transition-colors z-20">
               View More →
             </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {hallOfFameCards.map((game) => {
-              const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory.label];
+              const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory?.label] || {
+                bgGradient: "from-slate-800 to-slate-900",
+                hoverGradient: "hover:from-slate-700 hover:to-slate-800",
+                emoji: "🎮"
+              };
 
               return (
                 <a
@@ -248,34 +264,22 @@ export default function HomePage() {
                   <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 blur-2xl pointer-events-none" />
                   <div className="flex items-start justify-between gap-4 relative z-20">
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">
-                        {game.badge}
-                      </span>
+                      <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest">{game.badge}</span>
                       <h3 className="font-extrabold text-md text-white group-hover:text-amber-400 transition-colors">{game.title}</h3>
                     </div>
 
-                    {/* SQUARES: Refined dictionary-driven emoji boxes */}
-                    {categoryConfig && (
-                      <div
-                        className="relative group/emoji-tooltip overflow-visible"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        {/* Smoothly maps resting colors and hover profiles without blowing out brightness levels */}
-                        <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-md transition-all duration-300 hover:scale-105`}>
-                          <span className="text-xl px-2.5 py-1.5 rounded-[7px] bg-slate-950/70 group-hover/emoji-tooltip:bg-slate-950/30 block cursor-help text-center transition-colors duration-300">
-                            {categoryConfig.emoji}
-                          </span>
-                        </div>
-
-                        <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/emoji-tooltip:opacity-100 transition-opacity duration-200 text-xs text-right leading-normal z-50">
-                          <span className="block font-black text-rose-400 text-[10px] uppercase tracking-wider mb-1">
-                            {game.mainCompletionCategory.label}
-                          </span>
-                          {game.mainCompletionCategory.description}
-                        </div>
+                    <div className="relative group/emoji-tooltip overflow-visible" onClick={(e) => e.preventDefault()}>
+                      <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-md transition-all duration-300 hover:scale-105`}>
+                        <span className="text-xl px-2.5 py-1.5 rounded-[7px] bg-slate-950/70 group-hover/emoji-tooltip:bg-slate-950/30 block cursor-help text-center transition-colors duration-300">
+                          {categoryConfig.emoji}
+                        </span>
                       </div>
-                    )}
 
+                      <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/emoji-tooltip:opacity-100 transition-opacity duration-200 text-xs text-right leading-normal z-50">
+                        <span className="block font-black text-rose-400 text-[10px] uppercase tracking-wider mb-1">{game.mainCompletionCategory?.label}</span>
+                        {game.mainCompletionCategory?.description}
+                      </div>
+                    </div>
                   </div>
                   <p className="text-[11px] text-slate-400 mt-3 leading-relaxed border-l-2 border-amber-500/30 pl-2.5 relative z-20">
                     {game.reasoning}
@@ -286,25 +290,24 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ========================================================= */}
-        {/* MODULE 3: RECENTLY ADDED SECTOR LISTINGS                   */}
-        {/* ========================================================= */}
+        {/* MODULE 3: RECENTLY ADDED SECTOR LISTINGS */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
               <span className="text-rose-500">🆕</span> Recently Added
             </h2>
-            <a
-              href="/games"
-              className="text-xs text-rose-400 hover:text-rose-300 font-extrabold tracking-wider bg-rose-950/20 px-3 py-1.5 rounded border border-rose-900/40 transition-colors z-20"
-            >
+            <a href="/games" className="text-xs text-rose-400 hover:text-rose-300 font-extrabold tracking-wider bg-rose-950/20 px-3 py-1.5 rounded border border-rose-900/40 transition-colors z-20">
               View More →
             </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentlyAdded.map((game) => {
-              const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory.label];
+              const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory?.label] || {
+                bgGradient: "from-slate-800 to-slate-900",
+                hoverGradient: "hover:from-slate-700 hover:to-slate-800",
+                emoji: "🎮"
+              };
 
               return (
                 <a
@@ -312,7 +315,6 @@ export default function HomePage() {
                   href={`/games/${game.id}`}
                   className="block bg-slate-900/40 rounded-xl border border-slate-900 flex flex-col justify-between hover:bg-slate-900/60 transition-colors duration-200 overflow-visible group relative cursor-pointer text-left"
                 >
-
                   <div className="h-24 relative bg-slate-950 overflow-visible shrink-0 rounded-t-xl">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={game.assets.thumbnailUrl} alt={game.title} className="w-full h-full object-cover block align-middle opacity-60" />
@@ -324,36 +326,25 @@ export default function HomePage() {
                         <span className="text-[10px] font-bold text-rose-400 tracking-wide uppercase">{game.totalAchievements} Achievements</span>
                       </div>
 
-                      {/* FIXED RECENTLY ADDED BOX: Vibrant semi-translucent background & hyper-bright hover */}
-                      {/* SQUARES: Refined dictionary-driven emoji boxes */}
-                      {categoryConfig && (
-                        <div
-                          className="relative group/emoji-tooltip overflow-visible"
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          {/* Smoothly maps resting colors and hover profiles without blowing out brightness levels */}
-                          <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-md transition-all duration-300 hover:scale-105`}>
-                            <span className="text-xl px-2.5 py-1.5 rounded-[7px] bg-slate-950/70 group-hover/emoji-tooltip:bg-slate-950/30 block cursor-help text-center transition-colors duration-300">
-                              {categoryConfig.emoji}
-                            </span>
-                          </div>
-
-                          <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/emoji-tooltip:opacity-100 transition-opacity duration-200 text-xs text-right leading-normal z-50">
-                            <span className="block font-black text-rose-400 text-[10px] uppercase tracking-wider mb-1">
-                              {game.mainCompletionCategory.label}
-                            </span>
-                            {game.mainCompletionCategory.description}
-                          </div>
+                      <div className="relative group/emoji-tooltip overflow-visible" onClick={(e) => e.preventDefault()}>
+                        <div className={`p-[1px] rounded-lg bg-gradient-to-br ${categoryConfig.bgGradient} ${categoryConfig.hoverGradient} shadow-md transition-all duration-300 hover:scale-105`}>
+                          <span className="text-xl px-2.5 py-1.5 rounded-[7px] bg-slate-950/70 group-hover/emoji-tooltip:bg-slate-950/30 block cursor-help text-center transition-colors duration-300">
+                            {categoryConfig.emoji}
+                          </span>
                         </div>
-                      )}
 
+                        <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/emoji-tooltip:opacity-100 transition-opacity duration-200 text-xs text-right leading-normal z-50">
+                          <span className="block font-black text-rose-400 text-[10px] uppercase tracking-wider mb-1">{game.mainCompletionCategory?.label}</span>
+                          {game.mainCompletionCategory?.description}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div className="p-4 space-y-4 flex-1 flex flex-col justify-between relative z-20">
                     <div className="space-y-2">
                       <span className="text-[9px] uppercase font-black tracking-widest text-slate-500 block">Sample Requirements</span>
-                      {game.achievements.map((achievement) => (
+                      {game.achievements?.map((achievement) => (
                         <div
                           key={achievement.id}
                           className="p-2 bg-slate-950/60 rounded-lg border border-slate-900/60 flex items-center justify-between gap-4 group/item relative z-30"
@@ -365,7 +356,7 @@ export default function HomePage() {
                           </div>
 
                           <div className="flex shrink-0 gap-1">
-                            {achievement.tags.map((tag) => (
+                            {achievement.tags?.map((tag) => (
                               <div key={tag.id} className="relative group/ach-tooltip inline-block overflow-visible">
                                 <span className={`text-[9px] font-black tracking-wider px-2 py-0.5 rounded border uppercase cursor-help ${tag.tailwindClasses}`}>
                                   {tag.name}
@@ -376,7 +367,6 @@ export default function HomePage() {
                               </div>
                             ))}
                           </div>
-
                         </div>
                       ))}
                     </div>
@@ -396,7 +386,6 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-
                 </a>
               );
             })}
@@ -407,7 +396,6 @@ export default function HomePage() {
       {/* FOOTER SECTION */}
       <footer className="border-t border-slate-900 mt-12 bg-slate-950 pb-8 pt-10 relative z-20 w-full">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
-
           <div className="space-y-3 max-w-sm text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-2">
               <div className="w-5 h-5 rounded bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-[10px] border border-slate-800">
@@ -429,7 +417,6 @@ export default function HomePage() {
             <a href="/terms" className="hover:text-rose-400 transition-colors">Terms of Use</a>
             <a href="/contact" className="hover:text-rose-400 transition-colors">Contact Us</a>
           </div>
-
         </div>
       </footer>
     </div>

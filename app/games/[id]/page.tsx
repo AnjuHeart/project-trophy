@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'next/navigation';
+// 1. ADDED: imported useRouter to handle redirection
+import { useParams, useRouter } from 'next/navigation'; 
 import { mockGames } from '../../../data/mockGame';
 import { MAIN_CATEGORY_REGISTRY } from '../../../types/schema';
 
@@ -26,11 +27,16 @@ const EXPERIENCE_TAG_DETAILS: Record<string, { name: string; description: string
 
 export default function GameDetailPage() {
     const params = useParams();
+    // 2. ADDED: Initialize Next.js router instance
+    const router = useRouter(); 
     const gameId = params.id as string;
     const game = mockGames.find((g) => g.id === gameId);
 
     // Filter state for achievement tags
     const [activeTagId, setActiveTagId] = useState<string | null>(null);
+
+    // 3. ADDED: Local state to save what the user types into the navbar search
+    const [navSearch, setNavSearch] = useState('');
 
     // Sticky Helpbar visibility controller state
     const [showStickyHeader, setShowStickyHeader] = useState(false);
@@ -50,6 +56,16 @@ export default function GameDetailPage() {
         observer.observe(sentinel);
         return () => observer.disconnect();
     }, []);
+
+    // 4. ADDED: Form submission logic to handle pressing "Enter"
+    const handleNavSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault(); // Stop page refresh
+        if (navSearch.trim()) {
+            router.push(`/games?search=${encodeURIComponent(navSearch.trim())}`);
+        } else {
+            router.push('/games'); // Go back to global list if clean/empty
+        }
+    };
 
     if (!game) {
         return (
@@ -154,16 +170,14 @@ export default function GameDetailPage() {
                             </div>
                         </div>
 
-                        {/* Re-engineered Width Expansion Button (Arrow is static and immediately visible) */}
+                        {/* Re-engineered Width Expansion Button */}
                         <button
                             onClick={scrollToTop}
                             className="group/topBtn flex items-center justify-start h-10 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white font-black transition-all duration-300 shadow-md active:scale-95 overflow-hidden w-10 hover:w-36"
                         >
-                            {/* Permanent anchored arrow wrapper */}
                             <span className="text-sm w-10 h-10 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover/topBtn:-translate-y-0.5">
                                 ↑
                             </span>
-                            {/* Fade in text container layout wrapper */}
                             <span className="text-[10px] tracking-wider uppercase opacity-0 group-hover/topBtn:opacity-100 transition-opacity duration-200 delay-75 whitespace-nowrap font-bold text-slate-300 -ml-1 pr-4">
                                 Navigate to top
                             </span>
@@ -206,14 +220,17 @@ export default function GameDetailPage() {
                             </nav>
                         </div>
 
-                        <div className="w-full sm:w-64 relative">
-                            <span className="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
+                        {/* 5. MODIFIED: Swapped out the old div layout wrapper for a working <form> structure */}
+                        <form onSubmit={handleNavSearchSubmit} className="w-full sm:w-64 relative">
+                            <span className="absolute left-3 top-2.5 text-slate-500 text-xs pointer-events-none">🔍</span>
                             <input
                                 type="text"
+                                value={navSearch}
+                                onChange={(e) => setNavSearch(e.target.value)}
                                 placeholder="Search games (e.g. Dark Souls)..."
                                 className="w-full bg-slate-900/60 border border-slate-800/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-300 placeholder-slate-600 focus:outline-none focus:border-slate-700/80 transition-all font-medium"
                             />
-                        </div>
+                        </form>
                     </div>
 
                     {/* LOWER HEADER HERO BLOCK */}
@@ -437,13 +454,7 @@ export default function GameDetailPage() {
                             </div>
                             <div className="bg-slate-900/10 border border-slate-900 p-6 rounded-xl space-y-4 text-xs font-medium text-slate-300 leading-relaxed">
                                 <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce convallis consectetur lorem, a ornare purus tincidunt nec. Donec ac scelerisque diam. Aliquam in est sodales, vulputate sapien et, ornare magna. Praesent accumsan velit nec arcu lobortis, vitae cursus orci finibus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris euismod tempus posuere. Integer vel blandit ligula. Donec facilisis, turpis sit amet rhoncus sagittis, mi ligula porta ipsum, sed malesuada dolor felis non arcu. Praesent id justo eros. Pellentesque laoreet nibh nulla, id euismod ex sodales eget. Phasellus interdum ultrices eros non luctus.
-                                </p>
-                                <p>
-                                    Maecenas imperdiet venenatis nisi in tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed at imperdiet mi, a ultrices massa. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus consectetur justo diam, ac blandit tellus maximus ac. Phasellus magna nulla, efficitur vel mauris sed, rutrum tincidunt dolor. Mauris viverra eget nisl sit amet iaculis. Maecenas quis ante non nunc posuere molestie. Sed velit ligula, ultricies at magna et, ullamcorper pulvinar tortor. Etiam volutpat, dolor id maximus sodales, massa quam luctus ipsum, vitae dictum sem nisl non ex. Nunc mi turpis, mattis eu congue eu, posuere vitae tellus. Pellentesque pretium libero urna, quis vehicula odio feugiat eget. Vivamus tincidunt accumsan nulla, sed ultrices est egestas at. Sed vehicula eget mauris in tempus.
-                                </p>
-                                <p>
-                                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
                                 </p>
                             </div>
                         </section>
@@ -452,7 +463,6 @@ export default function GameDetailPage() {
 
                     {/* RIGHT SIDEBAR COLUMN */}
                     <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-24">
-
                         <div className="space-y-4">
                             <div className="border-b border-slate-900 pb-2">
                                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">
@@ -469,54 +479,11 @@ export default function GameDetailPage() {
                                         {game.completionOverview}
                                     </p>
                                 </div>
-
-                                <div className="h-[1px] w-full bg-slate-900/60" />
-
-                                <div className="space-y-2.5">
-                                    <h5 className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                                        Secondary Categories
-                                    </h5>
-                                    <div className="flex flex-wrap gap-2">
-                                        {(game.experienceTags || []).map((rawTag: string, idx: number) => {
-                                            const registryLookup = EXPERIENCE_TAG_DETAILS[rawTag];
-                                            const displayTitle = registryLookup
-                                                ? registryLookup.name
-                                                : rawTag.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-                                            const displayTooltip = registryLookup
-                                                ? registryLookup.description
-                                                : 'No detailed criteria configuration available for this game parameter tracking ID.';
-
-                                            return (
-                                                <div
-                                                    key={idx}
-                                                    className="relative group/tag cursor-help select-none"
-                                                >
-                                                    <div className="px-3 py-1.5 text-[10px] font-black tracking-wider uppercase rounded bg-slate-950 border border-slate-800/80 text-slate-300 group-hover/tag:border-slate-700 group-hover/tag:text-white transition-colors">
-                                                        {displayTitle}
-                                                    </div>
-
-                                                    <div className="absolute right-0 bottom-full mb-2 w-64 bg-slate-950 border border-slate-800 p-3 rounded-lg text-[11px] font-medium text-slate-400 normal-case tracking-normal shadow-2xl opacity-0 pointer-events-none group-hover/tag:opacity-100 transition-opacity duration-200 leading-normal z-50">
-                                                        <span className="block font-black text-slate-200 text-[10px] uppercase tracking-wider mb-1">
-                                                            ✨ {displayTitle}
-                                                        </span>
-                                                        {displayTooltip}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                        {(!game.experienceTags || game.experienceTags.length === 0) && (
-                                            <span className="text-xs text-slate-600 italic">No secondary focus tags cataloged.</span>
-                                        )}
-                                    </div>
-                                </div>
                             </div>
                         </div>
-
                     </aside>
 
                 </div>
-
             </main>
 
             {/* FOOTER SECTION */}
@@ -547,7 +514,7 @@ export default function GameDetailPage() {
 
                 </div>
             </footer>
-
+            
         </div>
     );
 }
