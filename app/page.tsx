@@ -110,13 +110,11 @@ export default function HomePage() {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {/* FIXED: Explicitly forced standard CSS layout layout styling for transitions */}
             <div
               className="flex w-full transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
               {trendingGames.map((game) => {
-                // FIXED: Safety fallback to prevent crashes if a lookup fails
                 const categoryConfig = MAIN_CATEGORY_REGISTRY[game.mainCompletionCategory?.label] || {
                   bgGradient: "from-slate-800 to-slate-900",
                   hoverGradient: "hover:from-slate-700 hover:to-slate-800",
@@ -125,22 +123,34 @@ export default function HomePage() {
 
                 return (
                   <div key={game.id} className="w-full shrink-0 snap-center">
+                    {/* Parent Link wrapper: items-stretch keeps the left image and right text columns perfectly equal in height */}
                     <a
                       href={`/games/${game.id}`}
-                      className="block w-full bg-gradient-to-br from-slate-900 to-slate-950/40 rounded-2xl border border-slate-900 hover:border-slate-800/80 transition-all duration-300 flex flex-col md:flex-row group relative shadow-2xl cursor-pointer text-left"
+                      className="block w-full bg-gradient-to-br from-slate-900 to-slate-950/40 rounded-2xl border border-slate-900 hover:border-slate-800/80 transition-all duration-300 flex flex-col md:flex-row items-stretch group relative shadow-2xl cursor-pointer text-left"
                     >
-                      <div className="w-full md:w-[40%] h-48 md:h-64 relative shrink-0 bg-slate-950 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none overflow-hidden">
+                      {/* Image Container: md:h-auto and absolute positioning lets the image dynamically match whatever size the text side forms */}
+                      <div className="w-full md:w-[40%] h-48 md:h-auto relative shrink-0 overflow-hidden rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={game.assets.thumbnailUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 opacity-60" />
+                        <img
+                          src={game.assets.thumbnailUrl}
+                          alt={game.title}
+                          className="w-full h-full object-cover md:absolute md:inset-0 group-hover:scale-102 transition-transform duration-700 opacity-60"
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-transparent via-slate-950/20 to-slate-950" />
                       </div>
 
+                      {/* Info & Metadata Panel Side */}
                       <div className="p-6 flex-1 flex flex-col justify-between space-y-4 overflow-visible relative">
                         <div className="space-y-1">
-                          <h3 className="text-xl font-black text-white group-hover:text-rose-400 transition-colors">{game.title}</h3>
-                          <p className="text-xs text-slate-400 font-semibold">{game.genres.join(' • ')}</p>
+                          <h3 className="text-xl font-black text-white group-hover:text-rose-400 transition-colors">
+                            {game.title}
+                          </h3>
+                          <p className="text-xs text-slate-400 font-semibold">
+                            {game.genres.join(' • ')}
+                          </p>
                         </div>
 
+                        {/* Difficulty Category Pill Layout */}
                         <div
                           className="relative group/tooltip inline-block self-start overflow-visible z-30"
                           onClick={(e) => e.stopPropagation()}
@@ -159,13 +169,30 @@ export default function HomePage() {
                           )}
                         </div>
 
+                        {/* Grid Summary Row */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-900/80 text-center md:text-left">
-                          <div className="border-r border-slate-900/40"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Achievements</span><span className="text-xs font-black text-slate-200">{game.totalAchievements} Total</span></div>
-                          <div className="sm:border-r border-slate-900/40 pl-2 sm:pl-0"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Blind Play</span><span className="text-xs font-black text-slate-200">{game.blindPlaythroughHours}h</span></div>
-                          <div className="border-r border-slate-900/40 pl-0 sm:pl-2"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Min Runs</span><span className="text-xs font-black text-slate-200">{game.minimumPlaythroughs}x</span></div>
-                          <div className="pl-2"><span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">100% Route</span><span className="text-xs font-black text-rose-400">{game.timeTo100PercentPerfect}h <span className="text-[10px] font-normal text-slate-500">/ {game.timeTo100PercentBase}h</span></span></div>
+                          <div className="border-r border-slate-900/40">
+                            <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Achievements</span>
+                            <span className="text-xs font-black text-slate-200">{game.totalAchievements} Total</span>
+                          </div>
+                          <div className="sm:border-r border-slate-900/40 pl-2 sm:pl-0">
+                            <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Blind Play</span>
+                            <span className="text-xs font-black text-slate-200">{game.blindPlaythroughHours}h</span>
+                          </div>
+                          <div className="border-r border-slate-900/40 pl-0 sm:pl-2">
+                            <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">Min Runs</span>
+                            <span className="text-xs font-black text-slate-200">{game.minimumPlaythroughs}x</span>
+                          </div>
+                          <div className="pl-2">
+                            <span className="block text-[9px] font-black text-slate-500 uppercase tracking-wider">100% Route</span>
+                            <span className="text-xs font-black text-rose-400">
+                              {game.timeTo100PercentPerfect}h{" "}
+                              <span className="text-[10px] font-normal text-slate-500">/ {game.timeTo100PercentBase}h</span>
+                            </span>
+                          </div>
                         </div>
 
+                        {/* Experience Tags Row */}
                         <div className="flex flex-wrap gap-1.5">
                           {game.experienceTags.map((tagId) => {
                             const tagConfig = EXPERIENCE_TAG_REGISTRY[tagId];

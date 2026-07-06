@@ -20,7 +20,7 @@ export default function Footer() {
                 </div>
 
                 <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 text-[11px] font-bold text-slate-500 uppercase tracking-wide">
-                    <a href="/about" className="hover:text-rose-400 transition-colors">About Us</a>
+                    <a href="/about" className="hover:text-rose-400 transition-colors">About</a>
                     <a href="/faq" className="hover:text-rose-400 transition-colors">FAQ</a>
                     <a href="/privacy" className="hover:text-rose-400 transition-colors">Privacy Policy</a>
                     <a href="/terms" className="hover:text-rose-400 transition-colors">Terms of Use</a>
