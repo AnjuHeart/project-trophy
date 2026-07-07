@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model MainCategory {
+  id            String   @id @default(cuid())
+  slug          String   @unique // e.g., "cozy-casual"
+  label         String   @unique // e.g., "Cozy & Casual Friendly"
+  emoji         String // e.g., "☕"
+  bgGradient    String // e.g., "from-emerald-800 to-emerald-950"
+  hoverGradient String // e.g., "hover:from-emerald-700 hover:to-emerald-900"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  games         Game[]
+}
+
+model SecondaryCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique // e.g., "dlc-required"
+  label       String   @unique // e.g., "DLC Required"
+  description String // Generic description of this secondary type
+  games       Game[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AchievementCategory {
+  id              String        @id @default(cuid())
+  slug            String        @unique // e.g., "heavy-grind"
+  label           String        @unique // e.g., "Heavy Grind"
+  description     String // e.g., "Requires intensive loop repetition."
+  weight          Int           @default(0) // e.g., 100 for heavy grind, 30 for easter eggs
+  tailwindClasses String // e.g., "bg-rose-950/40 text-rose-400 border-rose-900/50"
+  achievements    Achievement[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model ProfileBadge {
+  id              String @id @default(cuid())
+  slug            String @unique // e.g., "number-farmer", "impeccable-discipline"
+  name            String @unique // e.g., "Number Farmer", "Impeccable Discipline"
+  requirementText String // e.g., "Complete 20 games with average completion under 10 hours."
+  flavorText      String // e.g., "This user only cares about making their numbers go up."
+
+  // Visual Asset Styling
+  iconUrl         String // Path to the custom badge art asset
+  tailwindClasses String @default("border-slate-800 bg-slate-900/50 text-slate-300") // Unique styling/glows per badge
+
+  // Hidden/Mystery badge mechanics
+  isSecret Boolean @default(false) // true for secret badges where requirement is hidden until unlocked!
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Achievement {
+  id          String  @id @default(cuid())
+  slug        String // e.g., "clear-chapter-1"
+  name        String // e.g., "First Steps"
+  description String // e.g., "Complete the prologue sequence."
+  notes       String? // Optional hunting tips, strategies, or missable warnings!
+  imageUrl    String? // URL to the achievement icon badge
+  isSecret    Boolean @default(false) // Is the trophy description hidden by default?
+
+  // Relational connection to the parent Game
+  gameId String
+  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  // Relational connection to its specific category/tag type
+  achievementCategoryId String
+  achievementCategory   AchievementCategory @relation(fields: [achievementCategoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Game {
+  id    String @id @default(cuid())
+  slug  String @unique // e.g., "a-little-to-the-left"
+  title String // e.g., "A Little to the Left"
+
+  // Asset Vector Trio
+  thumbnailUrl  String // Card image (e.g., Grid view)
+  backgroundUrl String // Hero banner background wallpaper
+  logoUrl       String // Transparent game title logo overlay
+
+  genres        String[] // e.g., ["Puzzle", "Cozy", "Casual"]
+  isHomogeneous Boolean  @default(false) // Flag for dynamic dashboard filtering
+
+  // Statistical Indicators
+  totalAchievements       Int
+  blindPlaythroughHours   Int
+  minimumPlaythroughs     Int @default(1)
+  timeTo100PercentPerfect Int // Fast/Efficient route hours
+  timeTo100PercentBase    Int // General completion hours
+
+  // Editorial & Context Layouts (Grouped Together)
+  categoryContextDescription String // Explains *why* this specific game fits its main category
+  difficultyRating           Int    @default(1) // Difficulty scale gauge tied to this categorization
+  completionOverview         String // The breakdown/commentary on the journey
+
+  // Relational Connections to Lookup Tables
+  mainCategoryId String
+  mainCategory   MainCategory @relation(fields: [mainCategoryId], references: [id])
+
+  // Explicit Implicit Many-to-Many Connections
+  secondaryCategories SecondaryCategory[]
+  achievements        Achievement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
