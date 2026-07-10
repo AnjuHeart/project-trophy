@@ -37,7 +37,7 @@ model AchievementCategory {
   label           String        @unique // e.g., "Heavy Grind"
   description     String // e.g., "Requires intensive loop repetition."
   weight          Int           @default(0) // e.g., 100 for heavy grind, 30 for easter eggs
-  tailwindClasses String // e.g., "bg-rose-950/40 text-rose-400 border-rose-900/50"
+  theme           String // e.g., "bg-rose-950/40 text-rose-400 border-rose-900/50"
   achievements    Achievement[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -117,4 +117,38 @@ model Game {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  hallOfFameInductions HallOfFameGame[]
+}
+
+model HallOfFameCategory {
+  id             String            @id @default(uuid())
+  number         Int               @unique // Tracks 1 through 6
+  name           String            @unique
+  description    String
+  // Stores the example community icons as structured data: [{ id: "n-plus-plus", name: "N++" }]
+  communityIcons Json
+
+  // Relations
+  inductedGames  HallOfFameGame[]
+
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model HallOfFameGame {
+  id         String   @id @default(uuid())
+  reason     String   // The custom reason why *this* specific game fits the category
+  
+  // Relations
+  gameId     String
+  game       Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  categoryId String
+  category   HallOfFameCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([gameId, categoryId]) // Prevents duplicating the exact same game in the same category
 }
