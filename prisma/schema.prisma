@@ -9,146 +9,496 @@ datasource db {
   provider = "postgresql"
 }
 
+// ---------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------
+
+enum Role {
+  ADMIN
+  SEMI_ADMIN
+  SUPPORTER
+  USER
+}
+
+// ---------------------------------------------------------
+// USERS & PROFILES
+// ---------------------------------------------------------
+
+model User {
+  id             String   @id @default(cuid())
+  usernameSlug   String   @unique // NON-EDITABLE
+  username       String   @unique // EDITABLE
+  email          String   @unique
+  password       String   // Encoded password
+  role           Role     @default(USER)
+  
+  profile        UserProfile?
+  guides         Guide[]          @relation("UserGuides")
+  guidesTemp     GuideTemp[]      @relation("UserGuidesTemp")
+  progress       PlayerProgress[]
+  userTitles     UserTitle[]
+  userBadges     UserBadge[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  statistics     UserStatistic?
+}
+
+model UserProfile {
+  id               String  @id @default(cuid())
+  userId           String  @unique
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Aesthetics
+  profilePhotoUrl  String?
+  profileBannerUrl String?
+  displayName      String?
+  pronouns         String?
+  customStatus     String?
+  location         String?
+  
+  // Displayed Title & Badge (Selected from unlocked)
+  profileTitleId   String?
+  profileBadgeId   String?
+  
+  // External Profiles
+  steamProfileUrl    String?
+  xboxProfileUrl     String?
+  psnProfileUrl      String?
+  nintendoProfileUrl String?
+  
+  // Socials
+  xId         String?
+  blueskyId   String?
+  discordId   String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ---------------------------------------------------------
+// UNLOCKS: TITLES & BADGES
+// ---------------------------------------------------------
+
+model UserTitle {
+  id               String          @id @default(cuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hallOfFameTitleId String
+  hallOfFameTitle  HallOfFameTitle @relation(fields: [hallOfFameTitleId], references: [id], onDelete: Cascade)
+  
+  unlockedAt       DateTime        @default(now())
+
+  @@unique([userId, hallOfFameTitleId])
+}
+
+model HallOfFameTitle {
+  id               String          @id @default(cuid())
+  title            String          // e.g., "Thief of Hearts"
+  
+  hallOfFameGameId String
+  hallOfFameGame   HallOfFameGame  @relation(fields: [hallOfFameGameId], references: [id], onDelete: Cascade)
+  
+  awardedTo        UserTitle[]
+}
+
+model UserBadge {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileBadgeId String
+  profileBadge   ProfileBadge @relation(fields: [profileBadgeId], references: [id], onDelete: Cascade)
+  
+  unlockedAt     DateTime     @default(now())
+
+  @@unique([userId, profileBadgeId])
+}
+
+model ProfileBadge {
+  id              String      @id @default(cuid())
+  slug            String      @unique // e.g., "number-farmer", "impeccable-discipline"
+  name            String      @unique // e.g., "Number Farmer", "Impeccable Discipline"
+  requirementText String      // e.g., "Complete 20 games with average completion under 10 hours."
+  flavorText      String      // e.g., "This user only cares about making their numbers go up."
+
+  iconUrl         String      // Path to the custom badge art asset
+  tailwindClasses String      @default("border-slate-800 bg-slate-900/50 text-slate-300")
+
+  isSecret        Boolean     @default(false)
+  
+  unlockedBy      UserBadge[]
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+// ---------------------------------------------------------
+// CORE GAME DATA
+// ---------------------------------------------------------
+
+model Game {
+  id                      String   @id @default(cuid())
+  slug                    String   @unique
+  title                   String
+
+  thumbnailUrl            String
+  backgroundUrl           String
+  logoUrl                 String
+
+  genres                  String[]
+  isHomogeneous           Boolean  @default(false)
+
+  totalAchievements       Int
+  blindPlaythroughHours   Int
+  minimumPlaythroughs     Int      @default(1)
+  timeTo100PercentPerfect Int
+  timeTo100PercentBase    Int
+
+  categoryContextDescription String
+  difficultyRating           Int     @default(1)
+  completionOverview         String
+
+  mainCategoryId String
+  mainCategory   MainCategory @relation(fields: [mainCategoryId], references: [slug])
+
+  secondaryCategories SecondaryCategory[]
+  achievements        Achievement[]
+  hallOfFameInductions HallOfFameGame[]
+  guides              Guide[]
+  guidesTemp          GuideTemp[]
+  playerProgress      PlayerProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model MainCategory {
   id            String   @id @default(cuid())
-  slug          String   @unique // e.g., "cozy-casual"
-  label         String   @unique // e.g., "Cozy & Casual Friendly"
-  emoji         String // e.g., "☕"
-  bgGradient    String // e.g., "from-emerald-800 to-emerald-950"
-  hoverGradient String // e.g., "hover:from-emerald-700 hover:to-emerald-900"
+  slug          String   @unique
+  label         String   @unique
+  emoji         String
+  bgGradient    String
+  hoverGradient String
+  
+  games         Game[]
+  guides        Guide[]       // Submitted by guides
+  guidesTemp    GuideTemp[]   
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  games         Game[]
 }
 
 model SecondaryCategory {
   id          String   @id @default(cuid())
-  slug        String   @unique // e.g., "dlc-required"
-  label       String   @unique // e.g., "DLC Required"
-  description String // Generic description of this secondary type
+  slug        String   @unique
+  label       String   @unique
+  description String
+  
   games       Game[]
+  guides      Guide[]       // Submitted by guides
+  guidesTemp  GuideTemp[]   
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model AchievementCategory {
-  id              String        @id @default(cuid())
-  slug            String        @unique // e.g., "heavy-grind"
-  label           String        @unique // e.g., "Heavy Grind"
-  description     String // e.g., "Requires intensive loop repetition."
-  weight          Int           @default(0) // e.g., 100 for heavy grind, 30 for easter eggs
-  theme           String // e.g., "bg-rose-950/40 text-rose-400 border-rose-900/50"
-  achievements    Achievement[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-}
+  id                String               @id @default(cuid())
+  slug              String               @unique
+  label             String               @unique
+  description       String
+  weight            Int                  @default(0)
+  theme             String               @default("")
+  tailwindClasses   String?
 
-model ProfileBadge {
-  id              String @id @default(cuid())
-  slug            String @unique // e.g., "number-farmer", "impeccable-discipline"
-  name            String @unique // e.g., "Number Farmer", "Impeccable Discipline"
-  requirementText String // e.g., "Complete 20 games with average completion under 10 hours."
-  flavorText      String // e.g., "This user only cares about making their numbers go up."
+  achievements      Achievement[]
+  guideAchievements GuideAchievement[]   // Many-to-many override per guide
 
-  // Visual Asset Styling
-  iconUrl         String // Path to the custom badge art asset
-  tailwindClasses String @default("border-slate-800 bg-slate-900/50 text-slate-300") // Unique styling/glows per badge
-
-  // Hidden/Mystery badge mechanics
-  isSecret Boolean @default(false) // true for secret badges where requirement is hidden until unlocked!
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
 }
 
 model Achievement {
-  id          String  @id @default(cuid())
-  slug        String // e.g., "clear-chapter-1"
-  name        String // e.g., "First Steps"
-  description String // e.g., "Complete the prologue sequence."
-  notes       String? // Optional hunting tips, strategies, or missable warnings!
-  imageUrl    String? // URL to the achievement icon badge
-  isSecret    Boolean @default(false) // Is the trophy description hidden by default?
+  id                    String              @id @default(cuid())
+  slug                  String
+  name                  String
+  description           String
+  notes                 String?
+  imageUrl              String?
+  isSecret              Boolean             @default(false)
 
-  // Relational connection to the parent Game
-  gameId String
-  game   Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId                String
+  game                  Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
-  // Relational connection to its specific category/tag type
+  // Base categorization (Fallback/Official)
   achievementCategoryId String
   achievementCategory   AchievementCategory @relation(fields: [achievementCategoryId], references: [id])
 
+  // Guide-specific categorizations
+  guideOverrides        GuideAchievement[]
+  guideSteps            GuideStep[]         // Achievements expected in a specific step
+  guideStepsTemp        GuideStepTemp[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Game {
-  id    String @id @default(cuid())
-  slug  String @unique // e.g., "a-little-to-the-left"
-  title String // e.g., "A Little to the Left"
-
-  // Asset Vector Trio
-  thumbnailUrl  String // Card image (e.g., Grid view)
-  backgroundUrl String // Hero banner background wallpaper
-  logoUrl       String // Transparent game title logo overlay
-
-  genres        String[] // e.g., ["Puzzle", "Cozy", "Casual"]
-  isHomogeneous Boolean  @default(false) // Flag for dynamic dashboard filtering
-
-  // Statistical Indicators
-  totalAchievements       Int
-  blindPlaythroughHours   Int
-  minimumPlaythroughs     Int @default(1)
-  timeTo100PercentPerfect Int // Fast/Efficient route hours
-  timeTo100PercentBase    Int // General completion hours
-
-  // Editorial & Context Layouts (Grouped Together)
-  categoryContextDescription String // Explains *why* this specific game fits its main category
-  difficultyRating           Int    @default(1) // Difficulty scale gauge tied to this categorization
-  completionOverview         String // The breakdown/commentary on the journey
-
-  // Relational Connections to Lookup Tables
-  mainCategoryId String
-  mainCategory   MainCategory @relation(fields: [mainCategoryId], references: [id])
-
-  // Explicit Implicit Many-to-Many Connections
-  secondaryCategories SecondaryCategory[]
-  achievements        Achievement[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  hallOfFameInductions HallOfFameGame[]
-}
+// ---------------------------------------------------------
+// HALL OF FAME
+// ---------------------------------------------------------
 
 model HallOfFameCategory {
-  id             String            @id @default(uuid())
-  number         Int               @unique // Tracks 1 through 6
-  name           String            @unique
-  description    String
-  // Stores the example community icons as structured data: [{ id: "n-plus-plus", name: "N++" }]
+  id            String           @id @default(uuid())
+  slug          String           @unique
+  number        Int              @unique
+  name          String           @unique
+  description   String
   communityIcons Json
 
-  // Relations
   inductedGames  HallOfFameGame[]
 
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 }
 
 model HallOfFameGame {
-  id         String   @id @default(uuid())
-  reason     String   // The custom reason why *this* specific game fits the category
+  id         String @id @default(uuid())
+  reason     String
   
-  // Relations
   gameId     String
-  game       Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  game       Game   @relation(fields: [gameId], references: [slug], onDelete: Cascade)
   
   categoryId String
-  category   HallOfFameCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category   HallOfFameCategory @relation(fields: [categoryId], references: [slug], onDelete: Cascade)
+
+  titles     HallOfFameTitle[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@unique([gameId, categoryId]) // Prevents duplicating the exact same game in the same category
+  @@unique([gameId, categoryId])
+}
+
+// ---------------------------------------------------------
+// GUIDES (PUBLISHED)
+// ---------------------------------------------------------
+
+model Guide {
+  id                 String             @id @default(cuid())
+  slug               String             @unique
+  gameId             String
+  game               Game               @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  authorId           String
+  author             User               @relation("UserGuides", fields: [authorId], references: [id], onDelete: Cascade)
+  
+  approvedAt         DateTime?
+  upvotes            Int                @default(0)
+  views              Int                @default(0)
+  difficultySubmitted Int
+  stepsAmount        Int                @default(0)
+
+  // Submitted Categories
+  mainCategoryId     String
+  mainCategory       MainCategory       @relation(fields: [mainCategoryId], references: [id])
+  secondaryCategories SecondaryCategory[]
+
+  steps              GuideStep[]
+  guideAchievements  GuideAchievement[]
+  playerProgress     PlayerProgress[]
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model GuideStep {
+  id             String        @id @default(cuid())
+  guideId        String
+  guide          Guide         @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  
+  stepNumber     Int
+  stepWeight     String        // e.g., "h1", "h2", "h3"
+  title          String?
+  description    String?       @db.Text // Allows for larger rich-text storage
+  estimatedTime  String?       // e.g., "15 minutes"
+
+  // Expected achievements in this step
+  achievements   Achievement[] 
+}
+
+model GuideAchievement {
+  id               String               @id @default(cuid())
+  guideId          String
+  guide            Guide                @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  
+  achievementId    String
+  achievement      Achievement          @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  
+  notes            String?              @db.Text
+  
+  // Custom categories assigned by the guide author
+  categories       AchievementCategory[] 
+
+  @@unique([guideId, achievementId])
+}
+
+// ---------------------------------------------------------
+// GUIDES (TEMP / WORK-IN-PROGRESS)
+// ---------------------------------------------------------
+
+model GuideTemp {
+  id                 String             @id @default(cuid())
+  gameId             String
+  game               Game               @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  authorId           String
+  author             User               @relation("UserGuidesTemp", fields: [authorId], references: [id], onDelete: Cascade)
+  
+  difficultySubmitted Int?
+
+  // Submitted Categories
+  mainCategoryId     String?
+  mainCategory       MainCategory?      @relation(fields: [mainCategoryId], references: [id])
+  secondaryCategories SecondaryCategory[]
+
+  stepsTemp          GuideStepTemp[]
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model GuideStepTemp {
+  id             String        @id @default(cuid())
+  guideTempId    String
+  guideTemp      GuideTemp     @relation(fields: [guideTempId], references: [id], onDelete: Cascade)
+  
+  stepNumber     Int
+  stepWeight     String        
+  title          String?
+  description    String?       @db.Text
+  estimatedTime  String?
+
+  achievements   Achievement[] 
+}
+
+// ---------------------------------------------------------
+// PLAYER PROGRESS
+// ---------------------------------------------------------
+
+model PlayerProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  gameId         String
+  game           Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  guideId        String
+  guide          Guide     @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  
+  // Bookmark tracking
+  currentStepNum Int       @default(1)
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, gameId]) // A user can only track progress on a specific game once at a time
+}
+
+// ---------------------------------------------------------
+// USER STATISTICS & TRACKING ENGINE
+// ---------------------------------------------------------
+
+model UserStatistic {
+  id                                       String   @id @default(cuid())
+  userId                                   String   @unique
+  user                                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // -------------------------------------------------------
+  // General Totals
+  // -------------------------------------------------------
+  totalGamesCompleted                      Int      @default(0)
+  totalAchievementsObtained                Int      @default(0)
+  numberOfSeriesBeaten                     Int      @default(0)
+
+  // -------------------------------------------------------
+  // Hour Trackers (Stackable)
+  // -------------------------------------------------------
+  gamesWithAverageCompletionLowerThan5Hrs  Int      @default(0)
+  gamesWithAverageCompletionLowerThan10Hrs Int      @default(0)
+  gamesWithAverageCompletionHigherThan30Hrs Int     @default(0)
+  gamesWithAverageCompletionHigherThan50Hrs Int     @default(0)
+  gamesWithAverageCompletionHigherThan100Hrs Int    @default(0)
+
+  // -------------------------------------------------------
+  // Playthrough Trackers (Non-stackable)
+  // -------------------------------------------------------
+  gamesWith1Playthrough                    Int      @default(0)
+  gamesWith2Playthrough                    Int      @default(0)
+  gamesWith5PlusPlaythroughs               Int      @default(0)
+
+  // -------------------------------------------------------
+  // Difficulty Trackers (Non-stackable)
+  // -------------------------------------------------------
+  difficulty1Games                         Int      @default(0)
+  difficulty2Games                         Int      @default(0)
+  difficulty3Games                         Int      @default(0)
+  difficulty4Games                         Int      @default(0)
+  difficulty5Games                         Int      @default(0)
+  difficulty6Games                         Int      @default(0)
+  difficulty7Games                         Int      @default(0)
+  difficulty8Games                         Int      @default(0)
+  difficulty9Games                         Int      @default(0)
+  difficulty10Games                        Int      @default(0)
+
+  // -------------------------------------------------------
+  // Category Trackers
+  // -------------------------------------------------------
+  deadBrokenCompletionGames                Int      @default(0)
+  pieceOfCakeGames                         Int      @default(0)
+  allStoryRelatedGames                     Int      @default(0)
+  casualFriendlyGames                      Int      @default(0)
+  farmingFocusedGames                      Int      @default(0)
+  mapSweeperGames                          Int      @default(0)
+  highlyCheesableGames                     Int      @default(0)
+  willTestYourPatienceGames                Int      @default(0)
+  knowledgeHeavyGames                      Int      @default(0)
+  deadEndOdysseyGames                      Int      @default(0)
+  needsSkilledExecutionGames               Int      @default(0)
+  pureMasochismGames                       Int      @default(0)
+  extremeDisciplineTestGames               Int      @default(0)
+  repetitiveLoopMasteryGames               Int      @default(0)
+  cooperativeJourneyGames                  Int      @default(0)
+  massiveTimeSinkGames                     Int      @default(0)
+
+  // -------------------------------------------------------
+  // Hall Of Fame Trackers
+  // -------------------------------------------------------
+  hallOfFameGames                          Int      @default(0) // Sum of the below
+  famouslyDifficultGames                   Int      @default(0)
+  perfectStructureGames                    Int      @default(0)
+  forChallengersOnlyGames                  Int      @default(0)
+  monumentalEffortGames                    Int      @default(0)
+  hiddenGemsGames                          Int      @default(0)
+  narrativeDedicationGames                 Int      @default(0)
+
+  // -------------------------------------------------------
+  // Community Tropes & Habit Trackers
+  // -------------------------------------------------------
+  shamelessStatGames                       Int      @default(0)
+  dlcHeavyweightGames                      Int      @default(0) // Games with 50+ DLC achievements
+  weekendGames                             Int      @default(0) // Games finished on a weekend
+
+  // -------------------------------------------------------
+  // Milestone Booleans & Easter Eggs
+  // -------------------------------------------------------
+  hasCompletedMinecraft                    Boolean  @default(false)
+  hasCompletedMyNameIsMayo                 Boolean  @default(false)
+  hasBeatenDoomCrossing                    Boolean  @default(false) // Doom Eternal + Animal Crossing
+  nightOwlCompletion                       Boolean  @default(false) // Triggered once for a late-night log
+  maxedOutMultitasking                     Boolean  @default(false) // Hit the 10-simultaneous-guide limit
+
+  createdAt                                DateTime @default(now())
+  updatedAt                                DateTime @updatedAt
 }

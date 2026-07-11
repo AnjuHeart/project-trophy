@@ -22,6 +22,9 @@ export default function MainButtonPill({ mainAndGameData }: MainButtonPillProps)
 
             <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 text-slate-300 rounded-xl border border-slate-800 shadow-2xl opacity-0 pointer-events-none group-hover/emoji-tooltip:opacity-100 transition-opacity duration-200 text-xs text-right leading-normal z-50">
                 <span className="block font-black text-rose-400 text-[10px] uppercase tracking-wider mb-1">{mainAndGameData.name}</span>
+                <span className="block text-amber-400 text-[9px] font-extrabold uppercase mb-1">
+                    Difficulty: {mainAndGameData.difficulty}/10
+                </span>
                 {mainAndGameData.description}
             </div>
         </div>
