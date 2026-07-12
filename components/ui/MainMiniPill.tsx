@@ -3,8 +3,6 @@ interface mainAndGameData {
     emoji: string;
     bgGradient: string;
     hoverGradient: string;
-    difficulty: number;
-    description: string;
 }
 
 interface MainMiniPillProps {

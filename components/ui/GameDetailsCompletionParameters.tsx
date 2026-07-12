@@ -1,23 +1,11 @@
 import MainBigPill from "./MainBigPill";
 
 interface gameAndCategoryData {
-    mainCategory: {
-        label: string;
-        emoji: string;
-        bgGradient: string;
-        hoverGradient: string;
-    };
-    title: string;
-    genres: string[];
-    logoUrl: string;
-    wallpaperUrl: string;
     totalAchievements: number;
     blindPlaythroughHours: number;
     minimumPlaythroughs: number;
     timeTo100PercentPerfect: number;
     timeTo100PercentBase: number;
-    categoryContextDescription: string;
-    difficultyRating: number;
 }
 
 interface GameDetailsCompletionParametersProps {

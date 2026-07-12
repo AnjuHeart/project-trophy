@@ -14,7 +14,6 @@ interface gameAndCategoryData {
     totalAchievements: number;
     blindPlaythroughHours: number;
     minimumPlaythroughs: number;
-    timeTo100PercentBase: number;
     categoryContextDescription: string;
     difficultyRating: number;
 }

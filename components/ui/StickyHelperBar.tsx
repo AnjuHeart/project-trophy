@@ -1,5 +1,4 @@
 import MainMiniPill from "@/components/ui/MainMiniPill";
-import React, { useState, useEffect, useRef } from 'react';
 
 interface gameAndCategoryData {
     mainCategory: {
@@ -54,8 +53,6 @@ export default function StickyHelperBar({ gameAndCategoryData, isVisible, scroll
                             emoji: gameAndCategoryData.mainCategory.emoji,
                             bgGradient: gameAndCategoryData.mainCategory.bgGradient,
                             hoverGradient: gameAndCategoryData.mainCategory.hoverGradient,
-                            difficulty: gameAndCategoryData.difficultyRating,
-                            description: gameAndCategoryData.categoryContextDescription
                         }} />
 
                     </div>
