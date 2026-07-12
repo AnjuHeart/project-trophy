@@ -41,7 +41,8 @@ export default function GameClientView({ game }: { game: any }) {
 
     return (
         //DIV TO FIX HEADER OVERLAP
-        <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col select-none relative">
+        <div className={`min-h-screen font-sans antialiased flex flex-col select-none relative
+        ${isAwarded ? "bg-taupe-950 text-taupe-100" : "bg-slate-950 text-slate-100"}`}>
 
             {/* SUPPORT HELPBAR */}
             <StickyHelpbar
@@ -52,12 +53,12 @@ export default function GameClientView({ game }: { game: any }) {
             />
 
             {/* HERO BACKGROUND BANNER */}
-            <GameDetailsBackgroundHero gameAndCategoryData={game} />
+            <GameDetailsBackgroundHero gameAndCategoryData={game} isAwarded = {isAwarded}/>
 
             {/* MAIN */}
             <main className="max-w-7xl w-full mx-auto px-6 py-10 flex-1 space-y-12">
                 {/* GAME PARAMETERS */}
-                <GameDetailsCompletionParameters gameAndCategoryData={game} />
+                <GameDetailsCompletionParameters gameAndCategoryData={game} isAwarded = {isAwarded}/>
 
                 {/* SENTINEL FOR STICKY HELPBAR */}
                 <div ref={headerSentinelRef} className="w-full h-[1px] -mt-6 invisible" />

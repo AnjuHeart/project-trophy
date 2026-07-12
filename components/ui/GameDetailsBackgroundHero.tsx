@@ -16,21 +16,17 @@ interface gameAndCategoryData {
     minimumPlaythroughs: number;
     categoryContextDescription: string;
     difficultyRating: number;
-
-    hallOfFameInductions: {
-    }[];
 }
 
 interface GameDetailsBackgroundHeroProps {
     gameAndCategoryData: gameAndCategoryData;
+    isAwarded : boolean;
 }
 
-export default function GameDetailsBackgroundHero({ gameAndCategoryData }: GameDetailsBackgroundHeroProps) {
-
-    const isAwarded = gameAndCategoryData.hallOfFameInductions && gameAndCategoryData.hallOfFameInductions.length > 0;
-
+export default function GameDetailsBackgroundHero({ gameAndCategoryData, isAwarded }: GameDetailsBackgroundHeroProps) {
     return (
-        <div className="relative h-[480px] md:h-[520px] w-full overflow-hidden border-b border-slate-900 bg-slate-950 shrink-0">
+        <div className={`relative h-[480px] md:h-[520px] w-full overflow-hidden border-b shrink-0
+        ${isAwarded ? "border-taupe-900 bg-taupe-950" : "border-slate-900 bg-slate-950"}`}>
                 <img
                     src={gameAndCategoryData.backgroundUrl}
                     alt=""

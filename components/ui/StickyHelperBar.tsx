@@ -66,24 +66,24 @@ export default function StickyHelperBar({ gameAndCategoryData, isVisible, scroll
 
                 <div className="flex items-center gap-6 shrink-0">
                     <div className="hidden md:flex items-center gap-3 pl-6">
-                        <HelpbarSeparator isAwarded = {isAwarded}></HelpbarSeparator>
+                        <HelpbarSeparator isAwarded = {isAwarded}/>
                         <HelpbarInfoBox 
                             informationData={{labelText: "Achievements", dataText : gameAndCategoryData.totalAchievements + " Total"}} 
                             isAwarded = {isAwarded}>
                         </HelpbarInfoBox>
-                        <HelpbarSeparator isAwarded = {isAwarded}></HelpbarSeparator>
+                        <HelpbarSeparator isAwarded = {isAwarded}/>
 
                         <HelpbarInfoBox 
                             informationData={{labelText: "Blind run", dataText : gameAndCategoryData.blindPlaythroughHours + "h"}} 
                             isAwarded = {isAwarded}>
                         </HelpbarInfoBox>
-                        <HelpbarSeparator isAwarded = {isAwarded}></HelpbarSeparator>
+                        <HelpbarSeparator isAwarded = {isAwarded}/>
 
                         <HelpbarInfoBox 
                             informationData={{labelText: "Min. runs", dataText : gameAndCategoryData.minimumPlaythroughs + "x"}} 
                             isAwarded = {isAwarded}>
                         </HelpbarInfoBox>
-                        <HelpbarSeparator isAwarded = {isAwarded}></HelpbarSeparator>
+                        <HelpbarSeparator isAwarded = {isAwarded}/>
 
                         {/* HIGH CONTRAST INFO BOX */}
                         <div className="text-right">
