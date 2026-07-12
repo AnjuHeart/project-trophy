@@ -17,13 +17,14 @@ export default async function GameDetailsPage({ params }: GameDetailsProps) {
         select: {
             title: true,
             logoUrl: true,
+            backgroundUrl: true,
             difficultyRating: true,
             totalAchievements: true,
             blindPlaythroughHours: true,
             minimumPlaythroughs: true,
             timeTo100PercentBase: true,
             categoryContextDescription: true,
-
+            genres: true,
             mainCategory: {
                 select: {
                     emoji: true,

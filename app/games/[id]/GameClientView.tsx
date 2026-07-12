@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { notFound } from "next/navigation";
 import StickyHelpbar from '@/components/ui/StickyHelperBar';
+import GameDetailsBackgroundHero from '@/components/ui/GameDetailsBackgroundHero';
 
 
 // Note: You might want to define a TypeScript interface for this game prop
@@ -38,23 +39,24 @@ export default function GameClientView({ game }: { game: any }) {
         //DIV TO FIX HEADER OVERLAP
         <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col select-none relative">
 
-                //SUPPORT HELPBAR
+            {/* SUPPORT HELPBAR */}
             <StickyHelpbar
                 gameAndCategoryData={game}
                 isVisible={showStickyHeader}
                 scrollToTop={scrollToTop}
             />
 
-                //HERO BACKGROUND BANNER
+            {/* HERO BACKGROUND BANNER */}
+            <GameDetailsBackgroundHero gameAndCategoryData={game} />
 
+            {/* MAIN */}
             <main className="max-w-7xl w-full mx-auto px-6 py-10 flex-1 space-y-12">
-                    //GAME PARAMETERS
+                {/* GAME PARAMETERS */}
 
-                //SENTINEL FOR STICKY HELPBAR
+                {/* SENTINEL FOR STICKY HELPBAR */}
                 <div ref={headerSentinelRef} className="w-full h-[1px] -mt-6 invisible" />
-                    //
+                
             </main>
-
         </div>
     );
 }
