@@ -128,7 +128,7 @@ export default function GameClientView({ game }: { game: any }) {
 
                     {/* RIGHT SIDE */}
                     <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-24">
-                        <GameDetailsCompletionOverview gameAndCategoryData={game} />
+                        <GameDetailsCompletionOverview gameAndCategoryData={game} isAwarded = {isAwarded} />
                     </aside>
 
                 </div>
