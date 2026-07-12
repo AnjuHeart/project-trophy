@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { notFound } from "next/navigation";
 import StickyHelpbar from '@/components/ui/StickyHelperBar';
 import GameDetailsBackgroundHero from '@/components/ui/GameDetailsBackgroundHero';
+import GameDetailsCompletionParameters from '@/components/ui/GameDetailsCompletionParameters';
 
 
 // Note: You might want to define a TypeScript interface for this game prop
@@ -52,10 +53,13 @@ export default function GameClientView({ game }: { game: any }) {
             {/* MAIN */}
             <main className="max-w-7xl w-full mx-auto px-6 py-10 flex-1 space-y-12">
                 {/* GAME PARAMETERS */}
+                <GameDetailsCompletionParameters gameAndCategoryData={game} />
 
                 {/* SENTINEL FOR STICKY HELPBAR */}
                 <div ref={headerSentinelRef} className="w-full h-[1px] -mt-6 invisible" />
                 
+                
+
             </main>
         </div>
     );

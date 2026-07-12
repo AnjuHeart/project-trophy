@@ -22,6 +22,7 @@ export default async function GameDetailsPage({ params }: GameDetailsProps) {
             totalAchievements: true,
             blindPlaythroughHours: true,
             minimumPlaythroughs: true,
+            timeTo100PercentPerfect: true,
             timeTo100PercentBase: true,
             categoryContextDescription: true,
             genres: true,
