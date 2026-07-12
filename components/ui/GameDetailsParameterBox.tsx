@@ -16,18 +16,17 @@ export default function ParameterBox({ informationData, isAwarded, isHighContras
             <div>
                 <div className="flex items-center justify-between">
                     <span className={`text-[10px] font-black uppercase tracking-widest
-                        ${
-                            isHighContrast
+                        ${isHighContrast
                             ? (isAwarded ? "text-amber-500" : "text-rose-500")
                             : (isAwarded ? "text-stone-400" : "text-slate-500")
                         }`}>
-                            {informationData.labelText}</span>
+                        {informationData.labelText}</span>
                 </div>
                 <span className={`text-2xl font-black block mt-1
                 ${isHighContrast
-                            ? (isAwarded ? "text-amber-400" : "text-rose-400")
-                            : (isAwarded ? "text-stone-100" : "text-slate-300")
-                        }`}>
+                        ? (isAwarded ? "text-amber-400" : "text-rose-400")
+                        : (isAwarded ? "text-stone-100" : "text-slate-300")
+                    }`}>
                     {informationData.dataText}
                 </span>
             </div>

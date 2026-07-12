@@ -50,7 +50,7 @@ export default function StickyHelperBar({ gameAndCategoryData, isVisible, scroll
                     </div>
 
                     <div className="flex flex-col min-w-0 space-y-0.5">
-                        <h4 className="text-sm font-black text-white uppercase truncate tracking-tight">
+                        <h4 className={`text-sm font-black uppercase truncate tracking-tight ${isAwarded ? "text-amber-400" : "text-white"}`}>
                             {gameAndCategoryData.title}
                         </h4>
 
@@ -69,27 +69,30 @@ export default function StickyHelperBar({ gameAndCategoryData, isVisible, scroll
                         <HelpbarSeparator isAwarded = {isAwarded}/>
                         <HelpbarInfoBox 
                             informationData={{labelText: "Achievements", dataText : gameAndCategoryData.totalAchievements + " Total"}} 
-                            isAwarded = {isAwarded}>
+                            isAwarded = {isAwarded}
+                            isHighContrast = {false}>
                         </HelpbarInfoBox>
                         <HelpbarSeparator isAwarded = {isAwarded}/>
 
                         <HelpbarInfoBox 
                             informationData={{labelText: "Blind run", dataText : gameAndCategoryData.blindPlaythroughHours + "h"}} 
-                            isAwarded = {isAwarded}>
+                            isAwarded = {isAwarded}
+                            isHighContrast = {false}>
                         </HelpbarInfoBox>
                         <HelpbarSeparator isAwarded = {isAwarded}/>
 
                         <HelpbarInfoBox 
                             informationData={{labelText: "Min. runs", dataText : gameAndCategoryData.minimumPlaythroughs + "x"}} 
-                            isAwarded = {isAwarded}>
+                            isAwarded = {isAwarded}
+                            isHighContrast = {false}>
                         </HelpbarInfoBox>
                         <HelpbarSeparator isAwarded = {isAwarded}/>
 
-                        {/* HIGH CONTRAST INFO BOX */}
-                        <div className="text-right">
-                            <span className={`block text-[9px] font-black ${isAwarded ? "text-amber-500" : "text-rose-500"} uppercase tracking-widest`}>Average 100%</span>
-                            <span className={`text-sm font-black ${isAwarded ? "text-amber-400" : "text-rose-400"}`}>{gameAndCategoryData.timeTo100PercentBase}h</span>
-                        </div>
+                        <HelpbarInfoBox 
+                            informationData={{labelText: "Average 100%", dataText : gameAndCategoryData.timeTo100PercentBase + "h"}} 
+                            isAwarded = {isAwarded}
+                            isHighContrast = {true}>
+                        </HelpbarInfoBox>
                     </div>
 
                     {/* Re-engineered Width Expansion Button */}

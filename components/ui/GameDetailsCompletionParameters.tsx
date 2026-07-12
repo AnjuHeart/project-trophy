@@ -39,12 +39,12 @@ export default function GameDetailsCompletionParameters({ gameAndCategoryData, i
                 isHighContrast = {false}
                 />
                 <ParameterBox 
-                informationData={{labelText: "Perfect Run", dataText : gameAndCategoryData.timeTo100PercentPerfect + " Hours"}} 
+                informationData={{labelText: "Average Completion Time", dataText : gameAndCategoryData.timeTo100PercentBase + "h Average"}} 
                 isAwarded = {isAwarded} 
                 isHighContrast = {true}
                 />
                 <ParameterBox 
-                informationData={{labelText: "Average Completion Time", dataText : gameAndCategoryData.timeTo100PercentBase + "h Average"}} 
+                informationData={{labelText: "Perfect Run", dataText : gameAndCategoryData.timeTo100PercentPerfect + " hours"}} 
                 isAwarded = {isAwarded} 
                 isHighContrast = {false}
                 />
