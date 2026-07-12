@@ -39,7 +39,7 @@ export default function StickyHelperBar({ gameAndCategoryData, isVisible, scroll
                         <img
                             src={gameAndCategoryData.logoUrl}
                             alt={`${gameAndCategoryData.title} logo`}
-                            className="h-12 w-auto object-contain select-none"
+                            className="h-12 w-auto object-contain select-none drop-shadow-[1px_1px_0px_rgba(255,255,255,0.4)] drop-shadow-[-1px_-1px_0px_rgba(255,255,255,0.4)]"
                         />
                     </div>
 
