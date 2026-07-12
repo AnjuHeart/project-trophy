@@ -26,6 +26,7 @@ export default async function GameDetailsPage({ params }: GameDetailsProps) {
             timeTo100PercentBase: true,
             categoryContextDescription: true,
             genres: true,
+            completionOverview: true,
             mainCategory: {
                 select: {
                     emoji: true,

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import StickyHelpbar from '@/components/ui/StickyHelperBar';
 import GameDetailsBackgroundHero from '@/components/ui/GameDetailsBackgroundHero';
 import GameDetailsCompletionParameters from '@/components/ui/GameDetailsCompletionParameters';
+import GameDetailsCompletionOverview from '@/components/ui/GameDetailsCompletionOverview';
 
 
 // Note: You might want to define a TypeScript interface for this game prop
@@ -58,7 +59,75 @@ export default function GameClientView({ game }: { game: any }) {
                 {/* SENTINEL FOR STICKY HELPBAR */}
                 <div ref={headerSentinelRef} className="w-full h-[1px] -mt-6 invisible" />
                 
-                
+                {/* CONTENT SPLIT IN 2 COLUMNS */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                    {/* LEFT SIDE */}
+                    <div className="lg:col-span-8 space-y-10">
+                        <div className="bg-slate-900/10 border border-slate-900 p-6 rounded-xl space-y-4 text-xs font-medium text-slate-300 leading-relaxed">
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+                                </p>
+                            </div>
+                    </div>
+
+                    {/* RIGHT SIDE */}
+                    <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-24">
+                        <GameDetailsCompletionOverview gameAndCategoryData={game} />
+                    </aside>
+
+                </div>
 
             </main>
         </div>
