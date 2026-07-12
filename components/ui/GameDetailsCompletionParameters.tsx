@@ -20,11 +20,11 @@ interface gameAndCategoryData {
     difficultyRating: number;
 }
 
-interface StickyHelperBarProps {
+interface GameDetailsCompletionParametersProps {
     gameAndCategoryData: gameAndCategoryData;
 }
 
-export default function StickyHelperBar({ gameAndCategoryData }: StickyHelperBarProps) {
+export default function GameDetailsCompletionParameters({ gameAndCategoryData }: GameDetailsCompletionParametersProps) {
     return (
         <section className="space-y-4">
             <div className="border-b border-slate-900 pb-2">

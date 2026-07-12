@@ -19,11 +19,11 @@ interface gameAndCategoryData {
     difficultyRating: number;
 }
 
-interface StickyHelperBarProps {
+interface GameDetailsBackgroundHeroProps {
     gameAndCategoryData: gameAndCategoryData;
 }
 
-export default function StickyHelperBar({ gameAndCategoryData }: StickyHelperBarProps) {
+export default function GameDetailsBackgroundHero({ gameAndCategoryData }: GameDetailsBackgroundHeroProps) {
     return (
         <div className="relative h-[480px] md:h-[520px] w-full overflow-hidden border-b border-slate-900 bg-slate-950 shrink-0">
                 <img
