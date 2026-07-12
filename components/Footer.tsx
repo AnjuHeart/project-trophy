@@ -1,6 +1,11 @@
-import React from 'react';
+"use client";
+
+import { useGame } from './ContextManager';
 
 export default function Footer() {
+    
+    const { isAwardedGame } = useGame();
+
     return (
         <footer className="border-t border-slate-900 bg-slate-950 pb-8 pt-20 relative z-20 w-full">
             <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">

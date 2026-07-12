@@ -1,35 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { checkAwardStatus } from '@/app/actions';
+import { useGame } from './ContextManager';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [isAwardedGame, setIsAwardedGame] = useState(false);
-
   const pathSegments = pathname.split('/').filter(Boolean);
   const isHomePage = pathname === '/';
   const isGamesLibrary = pathname === '/games';
   const isIndividualGamePage = pathSegments[0] === 'games' && pathSegments.length > 1;
-  const gameSlug = isIndividualGamePage ? pathSegments[1] : null;
   const isNoSearchPage = isGamesLibrary || pathname === '/faq' || pathname === '/privacy';
-
-  useEffect(() => {
-    if (gameSlug) {
-      checkAwardStatus(gameSlug).then((awarded) => setIsAwardedGame(awarded));
-    } else {
-      setIsAwardedGame(false);
-    }
-  }, [gameSlug]);
 
   const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim() !== '') {
       window.location.href = `/games?search=${encodeURIComponent(searchQuery.trim())}`;
     }
   };
+
+  const { isAwardedGame } = useGame();
 
   const isLibraryActive = isGamesLibrary || isIndividualGamePage;
   const isHoFActive = pathname === '/hall-of-fame' || isAwardedGame;
