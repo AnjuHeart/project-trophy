@@ -16,6 +16,9 @@ interface gameAndCategoryData {
     minimumPlaythroughs: number;
     categoryContextDescription: string;
     difficultyRating: number;
+
+    hallOfFameInductions: {
+    }[];
 }
 
 interface GameDetailsBackgroundHeroProps {
@@ -23,14 +26,23 @@ interface GameDetailsBackgroundHeroProps {
 }
 
 export default function GameDetailsBackgroundHero({ gameAndCategoryData }: GameDetailsBackgroundHeroProps) {
+
+    const isAwarded = gameAndCategoryData.hallOfFameInductions && gameAndCategoryData.hallOfFameInductions.length > 0;
+
     return (
         <div className="relative h-[480px] md:h-[520px] w-full overflow-hidden border-b border-slate-900 bg-slate-950 shrink-0">
                 <img
                     src={gameAndCategoryData.backgroundUrl}
                     alt=""
                     className="w-full h-full object-cover opacity-80 blur-none scale-102 select-none pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/80" />
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-transparent to-slate-950" />
+                {/* AWARDED GAMES TINT CHANGE */}
+                <div className={`absolute inset-0 ${isAwarded ? 
+                    "bg-gradient-to-t from-taupe-950 via-taupe-950/40 to-taupe-950/80" 
+                    : "bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/80"}`} />
+                <div className={`absolute inset-0 ${isAwarded ?
+                    "bg-gradient-to-r from-taupe-950 via-transparent to-taupe-950" 
+                    : "bg-gradient-to-r from-slate-950 via-transparent to-slate-950"
+                }`} />
 
                 {/*HERO*/}
                 <div className="absolute inset-0 max-w-7xl mx-auto px-6 pt-6 pb-10 flex flex-col justify-between z-20">

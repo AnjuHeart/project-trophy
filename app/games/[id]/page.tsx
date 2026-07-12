@@ -27,12 +27,24 @@ export default async function GameDetailsPage({ params }: GameDetailsProps) {
             categoryContextDescription: true,
             genres: true,
             completionOverview: true,
+            //Category Inner Join
             mainCategory: {
                 select: {
                     emoji: true,
                     label: true,
                     bgGradient: true,
                     hoverGradient: true
+                }
+            },
+            //HallOfFame Outer Join
+            hallOfFameInductions: {
+                select: {
+                    reason: true,
+                    category: {
+                        select: {
+                            name: true
+                        }
+                    }
                 }
             }
         }

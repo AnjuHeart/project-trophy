@@ -37,6 +37,8 @@ export default function GameClientView({ game }: { game: any }) {
         notFound();
     }
 
+    const isAwarded = game.hallOfFameInductions && game.hallOfFameInductions.length > 0;
+
     return (
         //DIV TO FIX HEADER OVERLAP
         <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased flex flex-col select-none relative">
@@ -46,6 +48,7 @@ export default function GameClientView({ game }: { game: any }) {
                 gameAndCategoryData={game}
                 isVisible={showStickyHeader}
                 scrollToTop={scrollToTop}
+                isAwarded = {isAwarded}
             />
 
             {/* HERO BACKGROUND BANNER */}
