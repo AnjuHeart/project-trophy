@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useGame } from './ContextManager';
 
@@ -8,11 +8,42 @@ export default function Navbar() {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
 
+  // MOBILE INTERACTIONS
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  //LAYOUT INTERACTIONS
   const pathSegments = pathname.split('/').filter(Boolean);
   const isHomePage = pathname === '/';
   const isGamesLibrary = pathname === '/games';
   const isIndividualGamePage = pathSegments[0] === 'games' && pathSegments.length > 1;
   const isNoSearchPage = isGamesLibrary || pathname === '/faq' || pathname === '/privacy';
+
+  //SCROLL DIRECTION
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Always show navbar at the absolute top of the page
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down -> hide navbar & close active submenus
+        setIsVisible(false);
+        setIsMenuOpen(false);
+        setIsSearchOpen(false);
+      } else {
+        // Scrolling up -> reveal navbar
+        setIsVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim() !== '') {
@@ -26,9 +57,14 @@ export default function Navbar() {
   const isHoFActive = pathname === '/hall-of-fame' || isAwardedGame;
 
   return (
-    <nav className={`w-full h-20 absolute top-0 left-0 z-50 bg-gradient-to-b
-    ${isHoFActive ? "from-taupe-950/90 via-taupe-950/40 to-transparent" : "from-slate-950/90 via-slate-950/40 to-transparent"}`}>
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between gap-4">
+    <nav className={`w-full h-20 fixed top-0 left-0 z-50 transition-transform duration-300 backdrop-blur-md border-b
+        ${isVisible ? "translate-y-0" : "-translate-y-full"}
+        ${isHoFActive 
+          ? "bg-taupe-950/80 border-taupe-900/40 from-taupe-950/90 via-taupe-950/40" 
+          : "bg-slate-950/80 border-slate-900/40 from-slate-950/90 via-slate-950/40"
+        } bg-gradient-to-b to-transparent`}
+      >
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-full flex items-center justify-between gap-2 md:gap-4">
 
         {/* LEFT SIDE: URL */}
         <div className={`flex items-center gap-2 text-sm font-bold tracking-wider uppercase ${isHoFActive ? "text-taupe-500" : "text-slate-500"}`}>
@@ -38,33 +74,35 @@ export default function Navbar() {
             <span className="font-black text-slate-100 text-sm tracking-tight">Trophy<span className={`${isHoFActive ? "text-amber-500" : "text-rose-500"}`}>DB</span></span>
           </a>
 
-          {pathSegments.map((segment, index) => {
-            const url = `/${pathSegments.slice(0, index + 1).join('/')}`;
-            const isLast = index === pathSegments.length - 1;
-            const cleanSegmentName = decodeURIComponent(segment.replace(/-/g, ' '));
+          <div className="hidden md:flex items-center gap-2">
+            {pathSegments.map((segment, index) => {
+              const url = `/${pathSegments.slice(0, index + 1).join('/')}`;
+              const isLast = index === pathSegments.length - 1;
+              const cleanSegmentName = decodeURIComponent(segment.replace(/-/g, ' '));
 
-            return (
-              <div key={url} className="flex items-center gap-2">
-                <span className={`${isHoFActive ? "text-taupe-700" : "text-slate-700"} font-medium text-sm`}>/</span>
-                <a
-                  href={url}
-                  className={`transition-colors duration-150 text-sm ${isLast
+              return (
+                <div key={url} className="flex items-center gap-2">
+                  <span className={`${isHoFActive ? "text-taupe-700" : "text-slate-700"} font-medium text-sm`}>/</span>
+                  <a
+                    href={url}
+                    className={`transition-colors duration-150 text-sm ${isLast
                       ? (isHoFActive ? "text-amber-400/90 " : "text-rose-400/90 ") + 'font-extrabold cursor-default pointer-events-none'
                       : (isHoFActive ? "hover:text-amber-100" : "hover:text-slate-300")
-                    }`}
-                >
-                  {cleanSegmentName}
-                </a>
-              </div>
-            );
-          })}
+                      }`}
+                  >
+                    {cleanSegmentName}
+                  </a>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* RIGHT SIDE: SEARCHBAR AND NAVIGATION */}
         <div className="flex items-center gap-6">
 
           {!isNoSearchPage && (
-            <div className="relative w-48 md:w-64 transition-all duration-200">
+            <div className="hidden md:block relative w-48 md:w-64 transition-all duration-200">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs opacity-60">🔍</span>
               <input
                 type="text"
@@ -84,7 +122,7 @@ export default function Navbar() {
           <div className="flex items-center h-full gap-1">
 
             {/* Home Icon */}
-            <div className="relative flex items-center justify-center px-3 h-20">
+            <div className="relative flex items-center justify-center px-2 md:px-3 h-20">
               <a
                 href="/"
                 title="Home"
@@ -97,7 +135,7 @@ export default function Navbar() {
             </div>
 
             {/* Library Icon */}
-            <div className="relative flex items-center justify-center px-3 h-20">
+            <div className="relative flex items-center justify-center px-2 md:px-3 h-20">
               <a
                 href="/games"
                 title="Games Library"
@@ -110,7 +148,7 @@ export default function Navbar() {
             </div>
 
             {/* Hall of Fame Icon */}
-            <div className="relative flex items-center justify-center px-3 h-20">
+            <div className="relative flex items-center justify-center px-2 md:px-3 h-20">
               <a
                 href="/hall-of-fame"
                 title="Hall of Fame"
