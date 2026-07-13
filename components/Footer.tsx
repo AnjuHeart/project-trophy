@@ -9,8 +9,16 @@ export default function Footer() {
     const isHoFActive = pathname === '/hall-of-fame' || isAwardedGame;
 
     return (
-        <footer className={`border-t ${isHoFActive ? "border-taupe-900 bg-taupe-950" : "border-slate-900 bg-slate-950"} pb-8 pt-20 relative z-20 w-full`}>
-            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+        <footer className={`border-t ${isHoFActive ? "border-taupe-900 bg-taupe-950" : "border-slate-900 bg-slate-950"} pb-8 pt-12 md:pt-20 relative z-20 w-full`}>
+            <div className="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row-reverse items-center md:items-start justify-between gap-8 md:gap-6">
+
+                <div className={`flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3.5 text-[11px] font-bold ${isHoFActive ? "text-stone-500" : "text-slate-500"} uppercase tracking-wide w-full md:w-auto`}>
+                    <a href="/about" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>About</a>
+                    <a href="/faq" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>FAQ</a>
+                    <a href="/privacy" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>Privacy Policy</a>
+                    <a href="/terms" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>Terms of Use</a>
+                    <a href="/contact" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>Contact Us</a>
+                </div>
 
                 <div className="space-y-3 max-w-sm text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-2">
@@ -22,17 +30,10 @@ export default function Footer() {
                             Trophy<span className={`${isHoFActive ? "text-amber-500" : "text-rose-500"}`}>DB</span>
                         </span>
                     </div>
-                    <p className={`text-[10px] ${isHoFActive ? "text-stone-600" : "text-slate-600"} leading-relaxed font-medium`}>
+
+                    <p className={`text-[10px] ${isHoFActive ? "text-stone-600 border-taupe-900/60" : "text-slate-600 border-slate-900"} leading-relaxed font-medium pt-4 md:pt-0 border-t md:border-t-0`}>
                         TrophyDB is not affiliated with Sony, Microsoft, Valve or any other enterprise in any way. All game properties, titles, and logos are property of their respective owners.
                     </p>
-                </div>
-
-                <div className={`flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-3 text-[11px] font-bold ${isHoFActive ? "text-stone-500" : "text-slate-500"} uppercase tracking-wide`}>
-                    <a href="/about" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>About</a>
-                    <a href="/faq" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>FAQ</a>
-                    <a href="/privacy" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>Privacy Policy</a>
-                    <a href="/terms" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>Terms of Use</a>
-                    <a href="/contact" className={`${isHoFActive ? "hover:text-amber-400" : "hover:text-rose-400"} transition-colors`}>Contact Us</a>
                 </div>
 
             </div>
