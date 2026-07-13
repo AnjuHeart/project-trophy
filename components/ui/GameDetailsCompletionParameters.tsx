@@ -22,7 +22,7 @@ export default function GameDetailsCompletionParameters({ gameAndCategoryData, i
                 </h3>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
                 <ParameterBox 
                 informationData={{labelText: "Achievements", dataText : gameAndCategoryData.totalAchievements + " Total"}} 
                 isAwarded = {isAwarded} 
@@ -34,14 +34,15 @@ export default function GameDetailsCompletionParameters({ gameAndCategoryData, i
                 isHighContrast = {false}
                 />
                 <ParameterBox 
-                informationData={{labelText: "Minimum Runs", dataText : gameAndCategoryData.minimumPlaythroughs + "x Runs"}} 
-                isAwarded = {isAwarded} 
-                isHighContrast = {false}
-                />
-                <ParameterBox 
                 informationData={{labelText: "Average Completion Time", dataText : gameAndCategoryData.timeTo100PercentBase + "h Average"}} 
                 isAwarded = {isAwarded} 
                 isHighContrast = {true}
+                isFullWidthOnMobile = {true}
+                />
+                <ParameterBox 
+                informationData={{labelText: "Minimum Runs", dataText : gameAndCategoryData.minimumPlaythroughs + "x Runs"}} 
+                isAwarded = {isAwarded} 
+                isHighContrast = {false}
                 />
                 <ParameterBox 
                 informationData={{labelText: "Perfect Run", dataText : gameAndCategoryData.timeTo100PercentPerfect + " hours"}} 
