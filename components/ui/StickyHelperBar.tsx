@@ -31,7 +31,7 @@ export default function StickyHelperBar({ gameAndCategoryData, isVisible, scroll
 
     return (
         <div
-            className={`fixed top-0 left-0 right-0 h-24 z-50 transition-all duration-300 transform grid items-center px-6
+            className={`hidden md:flex fixed top-0 left-0 right-0 h-24 z-50 transition-all duration-300 transform grid items-center px-6
                 ${isVisible ? "translate-y-0 opacity-100 shadow-2xl" : "-translate-y-full opacity-0 pointer-events-none"}
                 ${isAwarded ? "bg-taupe-950/80 backdrop-blur-md border-b border-taupe-900/80" : "bg-slate-950/95 backdrop-blur-md border-b border-slate-900/80"}`}
         >

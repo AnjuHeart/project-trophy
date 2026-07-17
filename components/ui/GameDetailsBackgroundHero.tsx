@@ -25,7 +25,7 @@ interface GameDetailsBackgroundHeroProps {
 
 export default function GameDetailsBackgroundHero({ gameAndCategoryData, isAwarded }: GameDetailsBackgroundHeroProps) {
     return (
-        <div className={`relative h-[420px] md:h-[520px] w-full overflow-hidden border-b shrink-0 md:mt-18 
+        <div className={`relative h-[420px] md:h-[520px] w-full overflow-hidden border-b shrink-0 
         ${isAwarded ? "border-taupe-900 bg-taupe-950" : "border-slate-900 bg-slate-950"}`}>
             
             <img
