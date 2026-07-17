@@ -52,7 +52,7 @@ export default function Navbar() {
   return (
     <>
       {/*  MAIN HEADER */}
-      <nav className={`w-full h-16 top-0 left-0 z-50 transition-transform duration-300
+      <nav className={`w-full h-14 md:h-20 top-0 left-0 z-50 transition-transform duration-300
         /* MOBILE BASE: Fixed, Sticky, Scroll-Reveal, Solid Background, Blurred */
         fixed ${isVisible ? "translate-y-0" : "-translate-y-full"} backdrop-blur-md
         ${isHoFActive 

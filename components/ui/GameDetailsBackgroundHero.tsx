@@ -54,7 +54,7 @@ export default function GameDetailsBackgroundHero({ gameAndCategoryData, isAward
                         <img
                             src={gameAndCategoryData.logoUrl}
                             alt={`${gameAndCategoryData.title} Logo`}
-                            className="space-y-0.5 pl-1 text-center lg:text-left mx-auto lg:mx-0 h-14 sm:h-16 lg:h-auto lg:max-h-[200px] w-auto object-contain select-none pointer-events-none drop-shadow-[1px_1px_0px_rgba(255,255,255,0.4)] drop-shadow-[-1px_-1px_0px_rgba(255,255,255,0.4)]" 
+                            className="mx-auto lg:mx-0 h-24 sm:h-28 lg:h-auto lg:max-h-[200px] w-auto max-w-[85vw] lg:max-w-none object-contain select-none pointer-events-none drop-shadow-[1px_1px_0px_rgba(255,255,255,0.4)] drop-shadow-[-1px_-1px_0px_rgba(255,255,255,0.4)]" 
                         />
                     </div>
 
