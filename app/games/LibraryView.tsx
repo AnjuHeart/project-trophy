@@ -1,12 +1,23 @@
 "use client"
 
 import { LibraryStats } from "./page";
+import { Game } from "@prisma/client";
 
-interface LibraryViewProps{
-    stats: LibraryStats
+interface Pagination {
+    currentPage: number;
+    totalPages: number;
+    totalMatches: number;
 }
 
-export default function LibraryView({stats}: LibraryViewProps) {
+interface LibraryViewProps {
+    stats: LibraryStats
+    games: Game[]
+    pagination: Pagination
+}
+
+
+
+export default function LibraryView({ stats, games, pagination }: LibraryViewProps) {
     return (
         //DIV TO FIX HEADER OVERLAP
         <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-rose-500/30 selection:text-rose-200 flex flex-col">
@@ -26,7 +37,7 @@ export default function LibraryView({stats}: LibraryViewProps) {
                         <div>Guides Submitted: <span className="text-amber-400 text-sm font-black">{stats.guidesCount}</span></div>
                         <div className="h-4 w-[1px] bg-slate-800 hidden sm:block" />
                         <div>Achievements Tracked: <span className="text-amber-400 text-sm font-black">{stats.achievementsCount}</span></div>
-                        
+
                     </div>
                 </div>
 

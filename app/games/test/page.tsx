@@ -209,7 +209,7 @@ function GamesDirectoryContent() {
             {/* RANGE TIMELINE SLIDER */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Max 100% Run-Time</h3>
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Average 100% Filter</h3>
                 <span className="text-xs font-black text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">{maxHours}h</span>
               </div>
               <input
