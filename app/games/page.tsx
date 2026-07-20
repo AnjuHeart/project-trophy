@@ -124,9 +124,7 @@ export default async function GameDetailsPage({ searchParams }: PageProps) {
         };
 
         //TESTING PURPOSES LOG
-        console.log(
-            `--- Page ${currentPage} Games (Total Matches: ${totalMatchedGames}) ---`
-        );
+        console.log(`--- Page ${currentPage} Games (Total Matches: ${totalMatchedGames}) ---`);
         console.log(filteredGames.map(g => g.title));
         console.log("------------------------------------------------");
 
