@@ -6,6 +6,7 @@ import { Game } from "@prisma/client";
 
 import LibraryStatsRibbon from "@/components/ui/LibraryStatsRibbon";
 import FilterSidebar from "@/components/ui/FilterSidebar";
+import ControlBar from "@/components/ui/ControlBar";
 
 interface Pagination {
     currentPage: number;
@@ -103,9 +104,19 @@ export default function LibraryView({ stats, games, pagination }: LibraryViewPro
                     {/* RIGHT VIEWPORT DIRECTORY DISPLAY */}
                     <div className="lg:col-span-3 space-y-6">
 
-                        {/* CONTROL BAR STRIP & GRID WILL GO HERE */}
-                        <div className="text-slate-500 text-xs italic">
-                            Directory Display Viewport connected successfully. Ready for control bar wiring...
+                        <ControlBar
+                            searchQuery={searchQuery}
+                            onSearchChange={(query) => updateURL("search", query || null)}
+                            sortBy={sortBy}
+                            onSortChange={(value) => updateURL("sort", value)}
+                            isListView={isListView}
+                            onViewModeChange={setIsListView}
+                            onOpenMobileFilters={() => setIsMobileFiltersOpen(true)}
+                        />
+
+                        {/* DYNAMIC GAME CARDS PIPELINE GRID WILL UNFOLD HERE */}
+                        <div className="text-slate-500 text-xs italic p-4 border border-dashed border-slate-900 rounded-xl">
+                            Control bar integrated. Layout mode set to: {isListView ? "List View" : "Grid View"}. Ready to design game layouts...
                         </div>
 
                     </div>
