@@ -21,21 +21,21 @@ export default function ControlBar({
     onViewModeChange,
     onOpenMobileFilters
 }: ControlBarProps) {
-    // Local scratch state to avoid flickering network requests on every single keypress
     const [localSearch, setLocalSearch] = useState(searchQuery)
 
-    // Sync back if parent search state changes externally
     useEffect(() => {
         setLocalSearch(searchQuery)
     }, [searchQuery])
 
-    // Debounce effect: Wait 350ms after user stops typing before rewriting URL
     useEffect(() => {
         const timer = setTimeout(() => {
-            onSearchChange(localSearch)
+            // FIX RELOAD LOOP - ONLY SEARCH AFTER URL CHANGE
+            if (localSearch !== searchQuery) {
+                onSearchChange(localSearch)
+            }
         }, 350)
         return () => clearTimeout(timer)
-    }, [localSearch, onSearchChange])
+    }, [localSearch, searchQuery, onSearchChange])
 
     return (
         <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-900/20 border border-slate-900/60 p-3 rounded-xl shadow-inner">
