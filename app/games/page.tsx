@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import LibraryView from "./LibraryView";
 
+import { getCachedMainCategories } from "@/lib/services/categoryCache";
+
 export interface LibraryStats {
     gamesCount: number;
     awardedCount: number;
@@ -24,6 +26,9 @@ const ITEMS_PER_PAGE = 12;
 
 export default async function GameDetailsPage({ searchParams }: PageProps) {
     const params = await searchParams;
+
+    //REDIS CACHE SEARCH
+    const categories = await getCachedMainCategories();
 
     // PARSE URL
     const currentPage = Number(params.page) || 1;

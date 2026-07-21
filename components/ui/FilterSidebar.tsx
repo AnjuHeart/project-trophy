@@ -109,7 +109,7 @@ export default function FilterSidebar({
 
                 {/* HOF CATEGORIES */}
                 <div className="space-y-3">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Recognition Tier</h3>
+                    <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Filter by Award</h3>
                     <div className="flex flex-col gap-1.5">
                         {([
                             { id: 'famously-difficult', label: 'Famously Difficult' },
@@ -137,7 +137,7 @@ export default function FilterSidebar({
                 {/* SECTION 3: RANGE TIMELINE SLIDER */}
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Max Length Filter</h3>
+                        <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Completion Length</h3>
                         <span className="text-[10px] font-black text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">
                             {localTime < 150 ? `${localTime}h` : 'Any Time'}
                         </span>
@@ -154,7 +154,7 @@ export default function FilterSidebar({
                     />
                     <div className="flex justify-between text-[10px] text-slate-500 font-bold mt-1">
                         <span>5 Hours</span>
-                        <span>Uncapped</span>
+                        <span>150 Hours+</span>
                     </div>
                 </div>
 
